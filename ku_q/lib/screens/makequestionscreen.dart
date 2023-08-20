@@ -1,8 +1,10 @@
 
 
 
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ScrollBehaviorWithoutGlow extends ScrollBehavior {
@@ -22,6 +24,23 @@ class MakeQuestionScreen extends StatefulWidget {
 }
 
 class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
+
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController contentController = TextEditingController();
+  TextEditingController additionalPointController = TextEditingController(text: "0");
+
+  String postTitle = "";
+  String postContent = "";
+  int additionalPoint = 0;
+
+  final String _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  final Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -75,6 +94,12 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                 height: 35,
                                 // color: Colors.white,
                                 child: TextField(
+                                  controller: titleController,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      postTitle = value;
+                                    });
+                                  },
                                   style: const TextStyle(fontSize: 17),
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.all(8),
@@ -88,14 +113,18 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                   ),
                                 )
                               ),
-                              Container(
-                                width: 35,
-                                height: 35,
-                                child: const Center(child: Icon(Icons.camera_alt)),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(90),
-                                  color: Colors.white
-                                ),
+                              SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: RawMaterialButton(
+                                  onPressed: () {},
+                                  fillColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(90),
+                                  ),
+                                  child: const Icon(Icons.camera_alt)
+                                )
                               )
                             ],
                           ),
@@ -105,6 +134,12 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                             margin: const EdgeInsets.only(top: 15),
                             padding: const EdgeInsets.all(0),
                             child: TextField(
+                              controller: contentController,
+                              onChanged: (value) {
+                                setState(() {
+                                  postContent = value;
+                                });
+                              },
                               maxLines: 10,
                               style: const TextStyle(fontSize: 17),
                               decoration: InputDecoration(
@@ -192,7 +227,21 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                             color: Colors.white,
                                             borderRadius: BorderRadius.circular(90),
                                           ),
-                                          child: const Center(child: Text("NNN 냥", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),),
+                                          child: TextField(
+                                            maxLength: 7,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                                            keyboardType: const TextInputType.numberWithOptions(),
+                                            decoration: const InputDecoration(
+                                              counterText: '',
+                                            ),
+                                            controller: additionalPointController,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                additionalPoint = int.parse(value);
+                                              });
+                                            }
+                                          ),
                                         )
                                       ]
                                   ),
@@ -215,11 +264,11 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                     color: const Color(0xC0C0C0C0),
                                     borderRadius: BorderRadius.circular(90),
                                   ),
-                                  child: const Row(
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("   총 사용 포인트", style: TextStyle(fontWeight: FontWeight.w500)),
-                                      Text("MMM 냥   ", style: TextStyle(fontWeight: FontWeight.bold,
+                                      const Text("   총 사용 포인트", style: TextStyle(fontWeight: FontWeight.w500)),
+                                      Text('${(additionalPoint + 100).toString()} 냥  ', style: const TextStyle(fontWeight: FontWeight.bold,
                                       fontSize: 22)),
                                     ]
                                   )
@@ -236,10 +285,84 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                       height: 50,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFC896F),
+                          backgroundColor: const Color(0xFFFC896F),
                         ),
                         child: const Text("작성 완료", style: TextStyle(fontSize: 21, color: Colors.black, fontWeight: FontWeight.w600)),
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context) {
+                              if (titleController.text.isEmpty) {
+                                return AlertDialog(
+                                  title: const Text("질문 제목을 입력해주세요"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {Get.back();},
+                                      child: const Text("확인"),
+                                    )
+                                  ]
+                                );  // 질문 제목을 입력하지 않았을 시
+                              }
+                              else if (contentController.text.isEmpty) {
+                                return AlertDialog(
+                                    title: const Text("질문 내용을 입력해주세요"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {Get.back();},
+                                        child: const Text("확인"),
+                                      )
+                                    ]
+                                );  // 질문 내용을 입력하지 않았을 시
+                              }
+                              else if (additionalPointController.text.isEmpty) {
+                                return AlertDialog(
+                                    title: const Text("추가로 사용할 포인트를 입력해주세요"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {Get.back();},
+                                        child: const Text("확인"),
+                                      )
+                                    ]
+                                );
+                              }
+                              else return AlertDialog(
+                                insetPadding: const EdgeInsets.fromLTRB(0, 80, 0, 80),
+                                title: const Text("질문을 게시하시겠습니까?"),
+                                actions: [
+                                  TextButton(
+                                    child: const Text("취소"),
+                                    onPressed: () {Get.back();},
+                                  ),
+                                  TextButton(
+                                    child: const Text("확인"),
+                                    onPressed: () {
+                                      
+                                      String postKey = getRandomString(20);
+                                      DateTime now = DateTime.now();
+                                      int currentMilliSeconds = now.millisecondsSinceEpoch;
+                                      DateTime date = DateTime.fromMillisecondsSinceEpoch(currentMilliSeconds);
+
+                                      fireStore.collection("Post").doc(postKey).set({
+
+                                        "key": postKey,
+                                        "title": postTitle,
+                                        "content": postContent,
+                                        "point": additionalPoint + 100,
+                                        "views": 0,
+                                        "writerName": "안녕하세요",
+                                        "writeDate": date,
+
+                                      });
+
+                                      for (int i = 0; i < 2; i++) {Get.back();}
+                                    },
+                                  ),
+                                ]
+                              );
+                            }
+                          );
+                        },
                       )
                     ),
                     const SizedBox(height: 25)

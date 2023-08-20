@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:ku_q/screens/makequestionscreen.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class RecentQuestionScreen extends StatefulWidget {
   const RecentQuestionScreen({super.key});
@@ -13,6 +14,8 @@ class RecentQuestionScreen extends StatefulWidget {
 }
 
 class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,39 +27,23 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
         elevation: 0,
 
       ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 7,
-            child: Container(
-              color: Colors.red,
-              width: double.infinity,
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              // color: Colors.purple,
-              width: double.infinity,
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFC896F)),
-                  backgroundColor:
-                  MaterialStateProperty.all<Color>(const Color(0xFFFC896F)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        //side: BorderSide(color: Colors.red) // border line color
-                      )),
-                ),
-                child: const Text("질문하기", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-              ),
-            ),
-          )
-        ]
-      )
+      
+      body: Container(
+        color: Colors.red,
+      ),
+      
+      floatingActionButton: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: 40,
+        child: FloatingActionButton.extended(
+          onPressed: () {Get.to(MakeQuestionScreen(), transition: Transition.downToUp);},
+          backgroundColor: const Color(0xFFFC896F),
+          icon: const Icon(Icons.add),
+          label: const Text("질문하기", style: TextStyle(fontSize: 22, color: Colors.white)),
+        )
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
+
