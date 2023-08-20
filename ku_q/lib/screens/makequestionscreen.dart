@@ -326,7 +326,8 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                     ]
                                 );
                               }
-                              else return AlertDialog(
+                              else {
+                                return AlertDialog(
                                 insetPadding: const EdgeInsets.fromLTRB(0, 80, 0, 80),
                                 title: const Text("질문을 게시하시겠습니까?"),
                                 actions: [
@@ -360,6 +361,7 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                   ),
                                 ]
                               );
+                              }
                             }
                           );
                         },
