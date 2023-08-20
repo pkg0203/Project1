@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:ku_q/screens/homescreen.dart';
 import 'package:ku_q/screens/mypagescreen.dart';
 import 'package:ku_q/screens/pointshopscreen.dart';
-import 'package:ku_q/screens/questionscreen.dart';
+import 'package:ku_q/screens/makequestionscreen.dart';
+import 'package:ku_q/screens/recentquestionscreen.dart';
 import 'package:ku_q/screens/surveyscreen.dart';
 
 
@@ -45,7 +46,7 @@ class _MainPageState extends State<MainPage> {
   ];
 
   List screens = [
-    QuestionScreen(),
+    RecentQuestionScreen(),
     SurveyScreen(),
     HomeScreen(),
     PointShopScreen(),
@@ -55,12 +56,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: AppBar(
-        title: Text("KU Q&A🐯", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        shadowColor: Colors.white,
-      ),
 
       body: screens[_selectedIndex],
 
