@@ -1,7 +1,12 @@
 
 
 
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:ku_q/cards/postcard.dart';
 import 'package:ku_q/screens/makequestionscreen.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +18,37 @@ class RecentQuestionScreen extends StatefulWidget {
 }
 
 class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
+
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+  static const _pageSize = 10;
+  final PagingController _pagingController = PagingController(firstPageKey: 0);
+
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      final newItems = await fireStore.collection('Post').orderBy("writeDate").startAt([pageKey]).limit(_pageSize).get();
+      final isLastPage = newItems.docs.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems.docs);
+      } else {
+        final nextPageKey = pageKey + newItems.docs.length;
+        _pagingController.appendPage(newItems.docs, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
+
+  @override
+  void initState() {
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+    super.initState();
+  }
+  
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,41 +58,35 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
         titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: Colors.white,
         elevation: 0,
-
       ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 7,
-            child: Container(
-              color: Colors.red,
-              width: double.infinity,
-            ),
+
+      body: Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: PagedListView.separated(
+          pagingController: _pagingController,
+          builderDelegate: PagedChildBuilderDelegate(
+            itemBuilder: (context, dynamic item, index) {
+              return PostCard(docData: item);
+            }
           ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              // color: Colors.purple,
-              width: double.infinity,
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFC896F)),
-                  backgroundColor:
-                  MaterialStateProperty.all<Color>(const Color(0xFFFC896F)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        //side: BorderSide(color: Colors.red) // border line color
-                      )),
-                ),
-                child: const Text("질문하기", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-              ),
-            ),
+          separatorBuilder: (BuildContext context, int index) => const Divider(
+            height: 5,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+
+      floatingActionButton: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: 40,
+          child: FloatingActionButton.extended(
+            onPressed: () {Get.to(MakeQuestionScreen(), transition: Transition.downToUp);},
+            backgroundColor: const Color(0xFFFC896F),
+            icon: const Icon(Icons.add),
+            label: const Text("질문하기", style: TextStyle(fontSize: 22, color: Colors.white)),
           )
-        ]
-      )
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
