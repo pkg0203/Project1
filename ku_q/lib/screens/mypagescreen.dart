@@ -119,7 +119,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               label: Icon(Icons.arrow_right_alt),
                               style: OutlinedButton.styleFrom(
                                 shape: const StadiumBorder(),
-                                backgroundColor: Colors.black26,
+                                backgroundColor: Color(0xFFFC896F),
                                 side: const BorderSide(
                                     width: 0, color: Colors.black26),
                                 minimumSize: Size(100, 20),
@@ -179,7 +179,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         onPressed: null,
                         icon: Icon(
                           MyFlutterApp.cat_1,
-                          color: Colors.orange,
+                          color: Color(0xFFFC896F),
                         ),
                         label: Text(
                           '고양이 %d 마리',
@@ -205,7 +205,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         onPressed: null,
                         icon: Icon(
                           Icons.touch_app_outlined,
-                          color: Colors.red,
+                          color: Color(0xFFFC896F),
                         ),
                         label: Text(
                           '채택 N회',
