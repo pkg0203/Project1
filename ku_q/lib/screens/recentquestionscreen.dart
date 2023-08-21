@@ -9,6 +9,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ku_q/cards/postcard.dart';
 import 'package:ku_q/screens/makequestionscreen.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class RecentQuestionScreen extends StatefulWidget {
   const RecentQuestionScreen({super.key});

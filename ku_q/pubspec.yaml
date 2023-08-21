@@ -38,7 +38,10 @@ dependencies:
   get: ^4.6.5
   cloud_firestore: ^4.8.4
   pull_to_refresh: ^2.0.0
+<<<<<<< HEAD
   infinite_scroll_pagination: ^4.0.0
+=======
+>>>>>>> d6abdb9a875428a1b58b2e4548101fd0506618d0
 
 dev_dependencies:
   flutter_test:
