@@ -1,15 +1,13 @@
 
 
 
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ku_q/cards/postcard.dart';
 import 'package:ku_q/screens/makequestionscreen.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
 class RecentQuestionScreen extends StatefulWidget {
   const RecentQuestionScreen({super.key});
@@ -22,32 +20,7 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
-  static const _pageSize = 10;
-  final PagingController _pagingController = PagingController(firstPageKey: 0);
-
-  Future<void> _fetchPage(int pageKey) async {
-    try {
-      final newItems = await fireStore.collection('Post').orderBy("writeDate").startAt([pageKey]).limit(_pageSize).get();
-      final isLastPage = newItems.docs.length < _pageSize;
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems.docs);
-      } else {
-        final nextPageKey = pageKey + newItems.docs.length;
-        _pagingController.appendPage(newItems.docs, nextPageKey);
-      }
-    } catch (error) {
-      _pagingController.error = error;
-    }
-  }
-
-  @override
-  void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
-    super.initState();
-  }
-  
+  static const int _pageSize = 5;
 
 
   @override
@@ -63,25 +36,21 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
 
       body: Padding(
         padding: const EdgeInsets.only(top: 20.0),
-        child: PagedListView.separated(
-          pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate(
-            itemBuilder: (context, dynamic item, index) {
-              return PostCard(docData: item);
-            }
-          ),
-          separatorBuilder: (BuildContext context, int index) => const Divider(
-            height: 5,
-            color: Colors.grey,
-          ),
-        ),
+        child: FirestoreListView<Map<String, dynamic>> (
+          pageSize: _pageSize,
+          query: fireStore.collection('Post').orderBy('writeDate', descending: true),
+          itemBuilder: (context, snapshot) {
+            return PostCard(docData: snapshot);
+          },
+        )
+
       ),
 
       floatingActionButton: SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           height: 40,
           child: FloatingActionButton.extended(
-            onPressed: () {Get.to(MakeQuestionScreen(), transition: Transition.downToUp);},
+            onPressed: () {Get.to(const MakeQuestionScreen(), transition: Transition.downToUp);},
             backgroundColor: const Color(0xFFFC896F),
             icon: const Icon(Icons.add),
             label: const Text("질문하기", style: TextStyle(fontSize: 22, color: Colors.white)),
@@ -91,3 +60,4 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
     );
   }
 }
+

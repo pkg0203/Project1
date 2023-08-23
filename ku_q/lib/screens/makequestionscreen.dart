@@ -370,19 +370,22 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                                   int currentMilliSeconds = now.millisecondsSinceEpoch;
                                                   DateTime date = DateTime.fromMillisecondsSinceEpoch(currentMilliSeconds);
 
+                                                  String randomName = getRandomString(7);
+
                                                   fireStore.collection("Post").doc(postKey).set({
 
                                                     "key": postKey,
                                                     "title": postTitle,
                                                     "content": postContent,
                                                     "point": additionalPoint + 100,
-                                                    "views": 0,
-                                                    "writerName": "안녕하세요",
+                                                    "views": _rnd.nextInt(100),
+                                                    "writerName": randomName,
                                                     "writeDate": date,
 
                                                   });
 
-                                                  for (int i = 0; i < 2; i++) {Get.back();}
+                                                  Get.back();
+                                                  Get.back();
                                                 },
                                               ),
                                             ]
