@@ -4,6 +4,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,6 +27,7 @@ class MakeQuestionScreen extends StatefulWidget {
 class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
+  FirebaseAuth fireAuth = FirebaseAuth.instance;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
@@ -118,7 +120,6 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                       SizedBox(
                                           width: MediaQuery.of(context).size.width * 0.75 - 35,
                                           height: 35,
-                                          // color: Colors.white,
                                           child: TextField(
                                             controller: titleController,
                                             onChanged: (value) {
@@ -126,9 +127,11 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                                 postTitle = value;
                                               });
                                             },
+                                            textAlign: TextAlign.left,
+                                            textAlignVertical: TextAlignVertical.center,
                                             style: const TextStyle(fontSize: 17),
                                             decoration: InputDecoration(
-                                                contentPadding: const EdgeInsets.all(8),
+                                                contentPadding: const EdgeInsets.only(top: 8, left: 8),
                                                 filled: true,
                                                 fillColor: Colors.white,
                                                 hintText: "질문제목을 입력해주세요",
@@ -378,8 +381,7 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                                     "title": postTitle,
                                                     "content": postContent,
                                                     "point": additionalPoint + 100,
-                                                    "views": _rnd.nextInt(100),
-                                                    "writerName": randomName,
+                                                    "writerUid": fireAuth.currentUser?.uid,
                                                     "writeDate": date,
 
                                                   });
@@ -405,5 +407,14 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
           )
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    contentController.dispose();
+    additionalPointController.dispose();
+    fireStore.disableNetwork();
+    super.dispose();
   }
 }

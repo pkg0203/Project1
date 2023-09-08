@@ -1,7 +1,6 @@
 
 
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/cards/postcard.dart';
@@ -21,7 +20,6 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   static const int _pageSize = 5;
-
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +56,12 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  @override
+  void dispose() {
+    fireStore.disableNetwork();
+    super.dispose();
   }
 }
 

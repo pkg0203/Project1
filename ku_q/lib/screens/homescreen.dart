@@ -2,6 +2,7 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/cards/postcard.dart';
 
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.right,
                           ),
                           TextButton(
-                            onPressed: () {print("더보기 버튼 클릭");},
+                            onPressed: () {print(FirebaseAuth.instance.currentUser?.uid.toString());},
                             child: const Text("더보기>", style: TextStyle(color: Colors.black)),
                           )
                         ],
