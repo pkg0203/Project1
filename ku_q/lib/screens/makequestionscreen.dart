@@ -383,6 +383,8 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                                     "point": additionalPoint + 100,
                                                     "writerUid": fireAuth.currentUser?.uid,
                                                     "writeDate": date,
+                                                    "bookmarkCount": 0,
+                                                    "likeCount": 0
 
                                                   });
 

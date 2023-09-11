@@ -94,16 +94,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: MediaQuery.of(context).size.height * 0.7,
                     child: FutureBuilder<QuerySnapshot> (
-                        future: FirebaseFirestore.instance.collection('Post').orderBy('views', descending: true).limit(3).get(),
+                        future: FirebaseFirestore.instance.collection('Post').orderBy('likeCount', descending: true).limit(3).get(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             List<DocumentSnapshot> docs= snapshot.data!.docs;
+                            var cards = docs.map((e) => PostCard(docData: e));
                             return Column (
-                              children: [
-                                PostCard(docData: docs[0]),
-                                PostCard(docData: docs[1]),
-                                PostCard(docData: docs[2]),
-                              ]
+                              children: cards.toList()
                             );
                           }
                           else {

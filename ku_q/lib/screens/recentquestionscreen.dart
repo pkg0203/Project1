@@ -15,6 +15,14 @@ class RecentQuestionScreen extends StatefulWidget {
   State<RecentQuestionScreen> createState() => _RecentQuestionScreenState();
 }
 
+class ScrollBehaviorWithoutGlow extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
+  }
+}
+
 class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
@@ -34,12 +42,15 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
 
       body: Padding(
         padding: const EdgeInsets.only(top: 20.0),
-        child: FirestoreListView<Map<String, dynamic>> (
-          pageSize: _pageSize,
-          query: fireStore.collection('Post').orderBy('writeDate', descending: true),
-          itemBuilder: (context, snapshot) {
-            return PostCard(docData: snapshot);
-          },
+        child: ScrollConfiguration(
+          behavior: ScrollBehaviorWithoutGlow(),
+          child: FirestoreListView<Map<String, dynamic>> (
+            pageSize: _pageSize,
+            query: fireStore.collection('Post').orderBy('writeDate', descending: true),
+            itemBuilder: (context, snapshot) {
+              return PostCard(docData: snapshot);
+            },
+          ),
         )
 
       ),

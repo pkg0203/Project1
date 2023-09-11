@@ -1,9 +1,12 @@
 
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ku_q/email_authentication_page.dart';
+import 'package:ku_q/loginpage.dart';
 
 class ScrollBehaviorWithoutGlow extends ScrollBehavior {
   @override
@@ -22,15 +25,15 @@ class CreateAccountPage extends StatefulWidget {
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
 
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
   FirebaseAuth fireAuth = FirebaseAuth.instance;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController pwController = TextEditingController();
   TextEditingController pwCheckController = TextEditingController();
+  TextEditingController nickNameController = TextEditingController();
 
-  String email = '';
-  String pw = '';
-  String pwCheck = '';
+  bool nickNameDupCheck = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,16 +71,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     Row(
                       children: [
                         Expanded(
-                          flex: 3,
+                          flex: 4,
                           child: SizedBox(
                             height: 40,
                             child: TextField(
                               controller: emailController,
-                              onChanged: (value) {
-                                setState(() {
-                                  email = value;
-                                });
-                              },
                               cursorHeight: 20,
                               decoration: InputDecoration(
                                 filled: true,
@@ -91,24 +89,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             )
                           )
                         ),
-                        Expanded(
-                          flex: 1,
+                        const Expanded(
+                          flex: 3,
                           child: SizedBox(
                             height: 40,
-                            child: RawMaterialButton(
-                              onPressed: () {},
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                              fillColor: const Color(0xFFFC896F),
-                              child: const Text("중복확인", overflow: TextOverflow.clip, textAlign: TextAlign.center,)
+                            child: Center(
+                              child: Text(
+                                "@korea.ac.kr", style: TextStyle(fontSize: 18)
+                              ),
                             )
                           )
                         )
                       ],
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 30,
-                      child: Text("✓사용할 수 있는 계정입니다!", style: TextStyle(color: Colors.green))
                     ),
                     const SizedBox(height: 30),
                     const SizedBox(
@@ -120,12 +112,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         height: 40,
                         child: TextField(
                           controller: pwController,
-                          onChanged: (value) {
-                            setState(() {
-                              pw = value;
-                            });
-                          },
                           cursorHeight: 20,
+                          obscureText: true,
                           decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.black12,
@@ -147,12 +135,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         height: 40,
                         child: TextField(
                           controller: pwCheckController,
-                          onChanged: (value) {
-                            setState(() {
-                              pwCheck = value;
-                            });
-                          },
                           cursorHeight: 20,
+                          obscureText: true,
                           decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.black12,
@@ -163,6 +147,68 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               labelText: "비밀번호 확인"
                           ),
                         )
+                    ),
+                    const SizedBox(height: 30),
+                    const SizedBox(
+                        width: double.infinity,
+                        height: 25,
+                        child: Text("사용하실 닉네임을 입력해주세요", style: TextStyle(fontWeight: FontWeight.bold))
+                    ),
+                    SizedBox(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: TextField(
+                                controller: nickNameController,
+                                onChanged: (value) {
+                                  setState(() {
+                                    nickNameDupCheck = false;
+                                  });
+                                },
+                                cursorHeight: 20,
+                                decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.black12,
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                        borderSide: const BorderSide(width: 0, style: BorderStyle.none)
+                                    ),
+                                    labelText: "닉네임"
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                child: RawMaterialButton(
+                                  onPressed: () {
+                                    fireStore.collection('UserInfo').where('nickName', isEqualTo: nickNameController.text).get().then(
+                                            (value) => value.docs.isNotEmpty ? {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder: (context) {return AlertDialog(title: Text("이미 사용 중인 닉네임입니다"));}),
+                                                          setState(() {
+                                                            nickNameDupCheck =
+                                                                false;
+                                                          })
+                                                        }
+                                                      : setState((){nickNameDupCheck = true;})
+                                    );
+                                  },
+                                  fillColor: const Color(0xFFFC896F),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                  child: const Center(child: Text("중복확인"))
+                                ),
+                              )
+                            )
+                          ],
+                        )
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: nickNameDupCheck ? Text("✓사용 가능한 닉네임입니다!", style: TextStyle(color: Colors.green)) : Text("ⓧ닉네임 중복 확인 해주세요!", style: TextStyle(color: Colors.red))
                     ),
                     const SizedBox(height: 50),
                     const SizedBox(
@@ -177,10 +223,43 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       margin: const EdgeInsets.symmetric(vertical: 30),
                       width: double.infinity,
                       child: RawMaterialButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _createUser('${emailController.text}@korea.ac.kr', pwController.text, nickNameController.text).then(
+                                (msg) {
+                                  if (msg == '회원가입에 성공했습니다! 이메일 인증 이후 원활한 앱 이용이 가능합니다') {
+                                    showDialog(context: context, builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                        actionsPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                        actionsAlignment: MainAxisAlignment.center,
+                                        title: Text(msg),
+                                        actions: [SizedBox(
+                                          width: double.infinity,
+                                          child: TextButton(
+                                            style: TextButton.styleFrom(
+                                              backgroundColor: const Color(0xFFFC896F),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
+                                            ),
+                                            child: const Text("로그인 화면으로 돌아가기", style: TextStyle(color: Colors.black)),
+                                            onPressed: () {Get.offAll(() => const LogInPage());},
+                                          ),
+                                        )]
+                                      );
+                                    }, barrierDismissible: false);
+                                  }
+                                  else {
+                                    showDialog(context: context, builder: (context) {
+                                      return AlertDialog(
+                                          title: Text(msg),
+                                      );
+                                    });
+                                  }
+                                }
+                            );
+                          },
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           fillColor: const Color(0xFFFC896F),
-                          child: const Text("이메일 인증하기", overflow: TextOverflow.clip, textAlign: TextAlign.center,)
+                          child: const Text("회원 가입하기", overflow: TextOverflow.clip, textAlign: TextAlign.center,)
                       ),
                     )
                   ],
@@ -191,5 +270,40 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         )
       ),
     );
+  }
+
+  Future<String> _createUser(String email, String pw, String nickName) async {
+    String message = '';
+    try {
+      await fireAuth.createUserWithEmailAndPassword(email: email, password: pw).then(
+          (newUser) {
+            /* 가입 시 초기 설정 */
+            newUser.user?.updateDisplayName(nickName);
+            final newUserInfo = fireStore.collection('UserInfo').doc(newUser.user?.uid);
+            newUserInfo.set({
+              'nickName' : nickName,
+              'point' : 300,
+            });
+            newUserInfo.collection('Like').doc('rock_bottom').set({});
+            newUserInfo.collection('Bookmark').doc('rock_bottom').set({});
+          }
+      );
+      message = '회원가입에 성공했습니다! 이메일 인증 이후 원활한 앱 이용이 가능합니다';
+    }
+    on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        message = '이미 가입된 이메일입니다';
+      }
+      else if (e.code == 'invalid-email') {
+        message = '적합하지 않은 이메일입니다';
+      }
+      else if (e.code == 'weak-password') {
+        message = '비밀번호가 너무 약합니다';
+      }
+      else {
+        message = '회원가입에 실패했습니다. error code: ${e.code}';
+      }
+    }
+    return message;
   }
 }

@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ku_q/screens/makequestionscreen.dart';
-
 import 'cards/answercard.dart';
+
 
 class QuestionAndAnswerPage extends StatefulWidget {
 
@@ -36,10 +36,28 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
 
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-  
+
+  bool isBookmarked = false;
+  int bookmarkCount = 0;
+
+  bool isLiked = false;
+  int likeCount = 0;
+
   @override
   void initState() {
     docRef = widget.docData.reference;
+    fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid)
+        .collection('Bookmark').doc(widget.docData['key']).get().then(
+            (bookmarkedPost) =>
+        isBookmarked = bookmarkedPost.exists
+    );
+    fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid)
+        .collection('Like').doc(widget.docData['key']).get().then(
+            (likedPost) =>
+        isLiked = likedPost.exists
+    );
+    bookmarkCount = widget.docData['bookmarkCount'];
+    likeCount = widget.docData['likeCount'];
     // TODO: implement initState
     super.initState();
   }
@@ -157,18 +175,62 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                               children: [
                                                 Row(
                                                     children: [
-                                                      const Icon(Icons.thumb_up),
-                                                      Text("3"),
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          final like = fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid)
+                                                              .collection('Like').doc(widget.docData['key']);
+                                                          like.get().then(
+                                                                  (likedPost) =>
+                                                              likedPost.exists ?
+                                                              like.delete():
+                                                              like.set({})
+                                                          );
+                                                          setState(() {
+                                                            isLiked = !isLiked;
+                                                            docRef.update({'likeCount' : FieldValue.increment(isLiked ? 1 : -1)});
+                                                            docRef.get().then(
+                                                                    (snapshot) =>
+                                                                likeCount = snapshot['likeCount']
+                                                            );
+                                                          });
+                                                        },
+                                                        icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: Colors.black),
+                                                        splashRadius: 20,
+                                                        iconSize: 30,
+                                                      ),
+                                                      Text(likeCount.toString()),
                                                       const SizedBox(width: 10),
-                                                      const Icon(Icons.message),
+                                                      const Icon(Icons.message, color: Colors.black, size: 30),
                                                       Text(docs.length.toString()),
                                                       const SizedBox(width: 10),
                                                     ]
                                                 ),
                                                 Row(
                                                   children: [
-                                                    const Icon(Icons.bookmark),
-                                                    Text("5"),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        final book = fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid)
+                                                            .collection('Bookmark').doc(widget.docData['key']);
+                                                        book.get().then(
+                                                            (bookmarkedPost) =>
+                                                                bookmarkedPost.exists ?
+                                                                  book.delete():
+                                                                  book.set({})
+                                                        );
+                                                        setState(() {
+                                                          isBookmarked = !isBookmarked;
+                                                          docRef.update({'bookmarkCount' : FieldValue.increment(isBookmarked ? 1 : -1)});
+                                                          docRef.get().then(
+                                                              (snapshot) =>
+                                                                  bookmarkCount = snapshot['bookmarkCount']
+                                                          );
+                                                        });
+                                                      },
+                                                      icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border, color: Colors.black),
+                                                      splashRadius: 20,
+                                                      iconSize: 30,
+                                                    ),
+                                                    Text(bookmarkCount.toString()),
                                                   ],
                                                 ),
                                               ]
