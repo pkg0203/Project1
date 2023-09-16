@@ -4,9 +4,13 @@ import 'package:get/get.dart';
 import 'landingpage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+bool isFirebaseReady = true;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp().catchError((e) {
+    isFirebaseReady = false;
+    print(e);
+  });
   runApp(const MyApp());
 }
 

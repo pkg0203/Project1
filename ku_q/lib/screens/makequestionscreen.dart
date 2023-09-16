@@ -379,7 +379,7 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                                     "title": postTitle,
                                                     "content": postContent,
                                                     "point": additionalPoint + 100,
-                                                    "writerUid": fireAuth.currentUser?.uid,
+                                                    "writerRef": fireStore.collection("UserInfo").doc(fireAuth.currentUser?.uid),
                                                     "writeDate": date,
                                                     "bookmarkCount": 0,
                                                     "likeCount": 0

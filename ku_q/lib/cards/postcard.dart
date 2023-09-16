@@ -26,24 +26,19 @@ class _PostCardState extends State<PostCard> {
     // TODO: implement initState
     super.initState();
   }
-
-  // Post 컬렉션 내 writerUid의 값을 이용해 해당 유저의 정보를 받아오는 메소드
-  // 닉네임 변경 가능성 때문에 uid(불변)를 이용해 닉네임을 매번 받아와야 함
-  // 조금 비효율적인 방식같음... 후에 개선 여지
-  Future getWriterInfo() async {
-    final info = await fireStore.collection('UserInfo').doc(widget.docData['writerUid']).get();
-    return info;
-  }
   
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder (
-      future: getWriterInfo(),
+    return FutureBuilder<DocumentSnapshot> (
+      future: widget.docData['writerRef'].get(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return RawMaterialButton(
-            onPressed: () =>
-                Get.to(() => QuestionAndAnswerPage(docData: widget.docData, userInfo: snapshot.data,), transition: Transition.rightToLeft),
+            onPressed: () {
+              widget.docData.reference.get().then(
+                  (freshSnapshot) => Get.to(() => QuestionAndAnswerPage(docData: freshSnapshot, userInfo: snapshot.data!))
+              );
+            },
             child: Container(
                 margin: const EdgeInsets.only(
                     bottom: 10
