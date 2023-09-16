@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ku_q/loginpage.dart';
 
 import 'mainpage.dart';
 
@@ -20,8 +21,8 @@ class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
 
-    Timer(Duration(seconds: 1), () {
-      Get.offAll(MainPage());
+    Timer(const Duration(seconds: 1), () {
+      Get.offAll(() => const LogInPage(), transition: Transition.fadeIn);
     });
 
     // TODO: implement initState
@@ -37,7 +38,7 @@ class _LandingPageState extends State<LandingPage> {
           color: Colors.red,
           width: MediaQuery.of(context).size.width*0.5,
           height: MediaQuery.of(context).size.width*0.5,
-          child: Center(child: Text("로고", textScaleFactor: 5,))
+          child: const Center(child: Text("로고", textScaleFactor: 5,))
         )
       )
 
