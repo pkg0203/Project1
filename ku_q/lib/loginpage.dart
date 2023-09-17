@@ -196,6 +196,8 @@ class _LogInPageState extends State<LogInPage> {
         message = '비밀번호가 일치하지 않습니다.';
       } else if (e.code == 'invalid-email') {
         message = '유효하지 않은 이메일입니다';
+      } else {
+        message = '로그인에 실패했습니다.\n에러코드 : ${e.code}';
       }
       showDialog(context: context, builder: (context) {
         return AlertDialog(

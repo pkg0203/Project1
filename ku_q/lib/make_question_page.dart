@@ -17,14 +17,14 @@ class ScrollBehaviorWithoutGlow extends ScrollBehavior {
 }
 
 
-class MakeQuestionScreen extends StatefulWidget {
-  const MakeQuestionScreen({super.key});
+class MakeQuestionPage extends StatefulWidget {
+  const MakeQuestionPage({super.key});
 
   @override
-  State<MakeQuestionScreen> createState() => _MakeQuestionScreenState();
+  State<MakeQuestionPage> createState() => _MakeQuestionPageState();
 }
 
-class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
+class _MakeQuestionPageState extends State<MakeQuestionPage> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
   FirebaseAuth fireAuth = FirebaseAuth.instance;
@@ -80,8 +80,6 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                 onPressed: () {
                                   Get.back();
                                   Get.back();
-                                  deactivate();
-                                  dispose();
                                 },
                                 child: const Text("중단"),
                               ),
@@ -89,7 +87,7 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                         );
                       }
                   );
-                } else {Get.back();deactivate();dispose();}
+                } else {Get.back();}
               },
             ),
             backgroundColor: Colors.white,
@@ -366,30 +364,37 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
                                               ),
                                               TextButton(
                                                 child: const Text("확인"),
-                                                onPressed: () {
+                                                onPressed: () async {
 
                                                   String postKey = getRandomString(20);
                                                   DateTime now = DateTime.now();
                                                   int currentMilliSeconds = now.millisecondsSinceEpoch;
                                                   DateTime date = DateTime.fromMillisecondsSinceEpoch(currentMilliSeconds);
 
-                                                  fireStore.collection("Post").doc(postKey).set({
+                                                  await fireStore.runTransaction((transaction) async {
+                                                    transaction.set(fireStore.collection("Post").doc(postKey),
+                                                        {
 
-                                                    "key": postKey,
-                                                    "title": postTitle,
-                                                    "content": postContent,
-                                                    "point": additionalPoint + 100,
-                                                    "writerRef": fireStore.collection("UserInfo").doc(fireAuth.currentUser?.uid),
-                                                    "writeDate": date,
-                                                    "bookmarkCount": 0,
-                                                    "likeCount": 0
+                                                        "key": postKey,
+                                                        "title": postTitle,
+                                                        "content": postContent,
+                                                        "point": additionalPoint + 100,
+                                                        "writerUid": fireAuth.currentUser?.uid,
+                                                        "writeDate": date,
+                                                        "bookmarkCount": 0,
+                                                        "likeCount": 0,
+                                                        "likedBy": [],
+                                                        "answerCount": 0
 
+                                                        }
+                                                    );
+                                                    transaction.update(fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid),
+                                                      {
+                                                          "writtenPosts":
+                                                      FieldValue.arrayUnion(
+                                                          [postKey])
+                                                      });
                                                   });
-
-                                                  fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid).collection('WrittenPost').doc(postKey).set(
-                                                    {}
-                                                  );
-
                                                   Get.back();
                                                   Get.back();
                                                 },
@@ -415,10 +420,6 @@ class _MakeQuestionScreenState extends State<MakeQuestionScreen> {
 
   @override
   void dispose() {
-    titleController.dispose();
-    contentController.dispose();
-    additionalPointController.dispose();
-    fireStore.disableNetwork();
     super.dispose();
   }
 }

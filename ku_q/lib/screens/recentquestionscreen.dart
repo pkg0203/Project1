@@ -4,7 +4,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/cards/postcard.dart';
-import 'package:ku_q/screens/makequestionscreen.dart';
+import 'package:ku_q/make_question_page.dart';
 import 'package:get/get.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
@@ -59,7 +59,7 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
           width: MediaQuery.of(context).size.width * 0.9,
           height: 40,
           child: FloatingActionButton.extended(
-            onPressed: () {Get.to(const MakeQuestionScreen(), transition: Transition.downToUp);},
+            onPressed: () {Get.to(const MakeQuestionPage(), transition: Transition.downToUp);},
             backgroundColor: const Color(0xFFFC896F),
             icon: const Icon(Icons.add),
             label: const Text("질문하기", style: TextStyle(fontSize: 22, color: Colors.white)),
@@ -67,12 +67,6 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
-  }
-
-  @override
-  void dispose() {
-    fireStore.disableNetwork();
-    super.dispose();
   }
 }
 

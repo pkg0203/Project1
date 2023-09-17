@@ -1,4 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:ku_q/bookmarked_posts_page.dart';
+import 'package:ku_q/cards/written_post_card.dart';
+
+import '../written_posts_page.dart';
 //import 'package:ku_q/my_flutter_app_icons.dart';
 
 class MyPageScreen extends StatefulWidget {
@@ -9,6 +17,10 @@ class MyPageScreen extends StatefulWidget {
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
+
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
+  FirebaseAuth fireAuth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,7 +62,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           borderSize: 0.5,
                           onTap: null
                       ),
-                      OutlinedButton.icon(
+                      /*OutlinedButton.icon(
                         onPressed: null,
                         icon: Text(
                           '내 캐릭터 관리',
@@ -63,7 +75,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           side: const BorderSide(width: 2, color: Colors.white),
                           minimumSize: Size(100, 20),
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                   SizedBox(width: 20,),
@@ -110,7 +122,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           children: [
                             Text('나의 포인트', style: TextStyle(fontSize: 12),),
                             Text('NNN냥', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                            OutlinedButton.icon(
+                            /*OutlinedButton.icon(
                               onPressed: null,
                               icon: Text(
                                 '포인트샵 가기',
@@ -124,7 +136,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                     width: 0, color: Colors.black26),
                                 minimumSize: Size(100, 20),
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                       )
@@ -175,7 +187,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text('등급', style: TextStyle(fontSize: 12),),
-                      OutlinedButton.icon(
+                      /*OutlinedButton.icon(
                         onPressed: null,
                         icon: Icon(
                           Icons.check,
@@ -191,7 +203,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           side: const BorderSide(width: 2, color: Colors.white),
                           minimumSize: Size(140, 40),
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                   SizedBox(
@@ -201,7 +213,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text('누적 채택 수', style: TextStyle(fontSize: 12),),
-                      OutlinedButton.icon(
+                      /*OutlinedButton.icon(
                         onPressed: null,
                         icon: Icon(
                           Icons.touch_app_outlined,
@@ -217,7 +229,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           side: const BorderSide(width: 2, color: Colors.white),
                           minimumSize: Size(140, 40),
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ],
@@ -229,7 +241,14 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton.icon(
-                    onPressed: null,
+                    onPressed: () async {
+                      fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid).get().then(
+                              (freshUserInfo) {
+                            List postKeys = freshUserInfo.data()?['writtenPosts'];
+                            Get.to(() => WrittenPostsPage(writtenPostKeys: postKeys));
+                          }
+                      );
+                    },
                     icon: Icon(
                       Icons.star_border_rounded,
                       color: Colors.black,
@@ -293,7 +312,14 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton.icon(
-                    onPressed: null,
+                    onPressed: () async {
+                      fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid).get().then(
+                          (freshUserInfo) {
+                            List postKeys = freshUserInfo.data()?['bookmarkedPosts'];
+                            Get.to(() => BookmarkedPostsPage(bookmarkedPostKeys: postKeys));
+                          }
+                      );
+                    },
                     icon: Icon(
                       Icons.question_answer_outlined,
                       color: Colors.black,

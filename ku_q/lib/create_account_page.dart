@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ku_q/email_authentication_page.dart';
 import 'package:ku_q/loginpage.dart';
 
 class ScrollBehaviorWithoutGlow extends ScrollBehavior {
@@ -181,26 +180,24 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             ),
                             Expanded(
                               flex: 1,
-                              child: Container(
-                                child: RawMaterialButton(
-                                  onPressed: () {
-                                    fireStore.collection('UserInfo').where('nickName', isEqualTo: nickNameController.text).get().then(
-                                            (value) => value.docs.isNotEmpty ? {
-                                                          showDialog(
-                                                              context: context,
-                                                              builder: (context) {return AlertDialog(title: Text("이미 사용 중인 닉네임입니다"));}),
-                                                          setState(() {
-                                                            nickNameDupCheck =
-                                                                false;
-                                                          })
-                                                        }
-                                                      : setState((){nickNameDupCheck = true;})
-                                    );
-                                  },
-                                  fillColor: const Color(0xFFFC896F),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                  child: const Center(child: Text("중복확인"))
-                                ),
+                              child: RawMaterialButton(
+                                onPressed: () {
+                                  fireStore.collection('UserInfo').where('nickName', isEqualTo: nickNameController.text).get().then(
+                                          (value) => value.docs.isNotEmpty ? {
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) {return const AlertDialog(title: Text("이미 사용 중인 닉네임입니다"));}),
+                                                        setState(() {
+                                                          nickNameDupCheck =
+                                                              false;
+                                                        })
+                                                      }
+                                                    : setState((){nickNameDupCheck = true;})
+                                  );
+                                },
+                                fillColor: const Color(0xFFFC896F),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                child: const Center(child: Text("중복확인"))
                               )
                             )
                           ],
@@ -208,7 +205,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: nickNameDupCheck ? Text("✓사용 가능한 닉네임입니다!", style: TextStyle(color: Colors.green)) : Text("ⓧ닉네임 중복 확인 해주세요!", style: TextStyle(color: Colors.red))
+                      child: nickNameDupCheck ? const Text("✓사용 가능한 닉네임입니다!", style: TextStyle(color: Colors.green)) : const Text("ⓧ닉네임 중복 확인 해주세요!", style: TextStyle(color: Colors.red))
                     ),
                     const SizedBox(height: 50),
                     const SizedBox(
@@ -283,6 +280,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             newUserInfo.set({
               'nickName' : nickName,
               'point' : 300,
+              'bookmarkedPosts' : []
             });
             newUserInfo.collection('Like').doc('rock_bottom').set({});
             newUserInfo.collection('Bookmark').doc('rock_bottom').set({});

@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:ku_q/screens/makequestionscreen.dart';
+import 'package:ku_q/make_question_page.dart';
 import 'cards/answercard.dart';
 
 
@@ -37,15 +37,25 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  bool isBookmarked = false;
-  int bookmarkCount = 0;
-
   bool isLiked = false;
   int likeCount = 0;
 
+  bool isBookmarked = false;
+  int bookmarkCount = 0;
+
   @override
   void initState() {
-    docRef = widget.docData.reference;
+    setState(() {
+      docRef = widget.docData.reference;
+      likeCount = widget.docData['likeCount'];
+      isLiked = widget.docData['likedBy'].contains(fireAuth.currentUser?.uid);
+      bookmarkCount = widget.docData['bookmarkCount'];
+      fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid).get().then(
+          (snapshot) {
+            isBookmarked = snapshot['bookmarkedPosts'].contains(widget.docData['key']);
+          }
+      );
+    });
     // TODO: implement initState
     super.initState();
   }
@@ -63,7 +73,6 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
             onPressed: () {
               if (answerController.text.isEmpty){
                 Get.back();
-                dispose();
               }
               else {
                 showDialog(
@@ -151,13 +160,13 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                   ),
                                                   child: Text(widget.docData['content'], style: const TextStyle(fontSize: 16)),
                                                 ),
-                                                Container(
+                                                /*Container(
                                                     width: double.infinity,
                                                     height: 150,
                                                     color: Colors.red,
                                                     margin: const EdgeInsets.symmetric(vertical: 20),
-                                                    child: Center(child: Text("사진(있는 경우)", style: TextStyle(fontSize: 40)))
-                                                ),
+                                                    child: const Center(child: Text("사진(있는 경우)", style: TextStyle(fontSize: 40)))
+                                                ),*/
                                                 Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
@@ -173,16 +182,20 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                                   });
                                                                 }
                                                                 else {
-
+                                                                  DecLikes();
+                                                                  setState(() {
+                                                                    isLiked = false;
+                                                                    likeCount -= 1;
+                                                                  });
                                                                 }
                                                               },
-                                                              icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: Colors.black),
+                                                              icon: Icon(Icons.thumb_up, color: isLiked ? const Color(0xFFFC896F) : Colors.black),
                                                               splashRadius: 20,
                                                               iconSize: 30,
                                                             ),
                                                             Text(likeCount.toString()),
                                                             const SizedBox(width: 10),
-                                                            const Icon(Icons.message, color: Colors.black, size: 30),
+                                                            const Icon(Icons.message, color: Color(0xFF4194AE), size: 30),
                                                             Text(docs.length.toString()),
                                                             const SizedBox(width: 10),
                                                           ]
@@ -191,24 +204,22 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                         children: [
                                                           IconButton(
                                                             onPressed: () {
-                                                              final book = fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid)
-                                                                  .collection('Bookmark').doc(widget.docData['key']);
-                                                              book.get().then(
-                                                                      (bookmarkedPost) =>
-                                                                  bookmarkedPost.exists ?
-                                                                  book.delete():
-                                                                  book.set({})
-                                                              );
-                                                              setState(() {
-                                                                isBookmarked = !isBookmarked;
-                                                                docRef.update({'bookmarkCount' : FieldValue.increment(isBookmarked ? 1 : -1)});
-                                                                docRef.get().then(
-                                                                        (snapshot) =>
-                                                                    bookmarkCount = snapshot['bookmarkCount']
-                                                                );
-                                                              });
+                                                              if (!isBookmarked) {
+                                                                AddBookmark();
+                                                                setState(() {
+                                                                  isBookmarked = true;
+                                                                  bookmarkCount += 1;
+                                                                });
+                                                              }
+                                                              else {
+                                                                DeleteBookmark();
+                                                                setState(() {
+                                                                  isBookmarked = false;
+                                                                  bookmarkCount -= 1;
+                                                                });
+                                                              }
                                                             },
-                                                            icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border, color: Colors.black),
+                                                            icon: Icon(Icons.bookmark, color: isBookmarked ? const Color(0xFFFEC860) : Colors.black),
                                                             splashRadius: 20,
                                                             iconSize: 30,
                                                           ),
@@ -250,7 +261,9 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                     child: TextField(
                       controller: answerController,
                       onChanged: (value) {
-                        answer = value;
+                        setState(() {
+                          answer = value;
+                        });
                       },
                       maxLines: null,
                       maxLength: 500,
@@ -298,7 +311,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                   },
                                   child: const Text("취소")),
                               TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     String postKey = getRandomString(20);
                                     DateTime now = DateTime.now();
                                     int currentMilliSeconds =
@@ -308,15 +321,20 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                         currentMilliSeconds);
 
 
-                                    docRef
-                                        .collection("Answer")
-                                        .doc(postKey)
-                                        .set({
-                                      "key": postKey,
-                                      "content": answer,
-                                      "writerUid": fireAuth.currentUser?.uid,
-                                      "writeDate": date,
-                                    });
+                                    await fireStore.runTransaction((transaction) async {
+                                      transaction.set(docRef.collection('Answer').doc(postKey),
+                                          {
+                                            "key": postKey,
+                                            "content": answer,
+                                            "writerUid": fireAuth.currentUser?.uid,
+                                            "writeDate": date,
+                                          }
+                                      );
+                                      transaction.update(docRef, {'answerCount' : FieldValue.increment(1)});
+                                    }).then(
+                                        (value) => print("댓글 작성 성공"),
+                                      onError: (e) => print("에러코드 : $e")
+                                    );
                                     answerController.text = "";
                                     answer = "";
                                     FocusManager.instance.primaryFocus?.unfocus();
@@ -335,15 +353,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
     );
   }
 
-  @override
-  void dispose() {
-    fireStore.disableNetwork();
-    answerController.dispose();
-    super.dispose();
-  }
-
   void IncLikes() {
-    bool ret = false;
     fireStore.runTransaction((transaction) async {
       final snapshot = await transaction.get(docRef);
       // Note: this could be done without a transaction
@@ -358,14 +368,33 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
   }
 
   void DecLikes() {
-    bool ret = false;
     fireStore.runTransaction((transaction) async {
       final snapshot = await transaction.get(docRef);
       // Note: this could be done without a transaction
       //       by updating the population using FieldValue.increment()
-      final newLike = snapshot.get("likeCount") + 1;
+      final newLike = snapshot.get("likeCount") - 1;
       transaction.update(docRef, {"likeCount": newLike});
-      transaction.update(docRef, {"likeBy": FieldValue.arrayRemove([fireAuth.currentUser?.uid])});
+      transaction.update(docRef, {"likedBy": FieldValue.arrayRemove([fireAuth.currentUser?.uid])});
+    }).then(
+          (value) => {print("success")},
+      onError: (e) => {print(e)},
+    );
+  }
+
+  void AddBookmark() {
+    fireStore.runTransaction((transaction) async {
+      transaction.update(docRef, {"bookmarkCount": FieldValue.increment(1)});
+      transaction.update(widget.userInfo.reference, {"bookmarkedPosts": FieldValue.arrayUnion([widget.docData['key']])});
+    }).then(
+          (value) => {print("success")},
+      onError: (e) => {print(e)},
+    );
+  }
+
+  void DeleteBookmark() {
+    fireStore.runTransaction((transaction) async {
+      transaction.update(docRef, {"bookmarkCount": FieldValue.increment(-1)});
+      transaction.update(widget.userInfo.reference, {"bookmarkedPosts": FieldValue.arrayRemove([widget.docData['key']])});
     }).then(
           (value) => {print("success")},
       onError: (e) => {print(e)},
