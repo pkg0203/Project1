@@ -1,13 +1,19 @@
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ku_q/cards/surveycard.dart';
 
 class SurveyScreen extends StatefulWidget {
   const SurveyScreen({super.key});
 
   @override
   State<SurveyScreen> createState() => _SurveyScreenState();
+
 }
 
 class _SurveyScreenState extends State<SurveyScreen> {
+  FirebaseFirestore firestore= FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +37,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 8.0), // 스페이스바 한 칸 정도의 간격
+                SizedBox(width: 8.0), // 검색창과 검색하기의 여백
                 // '만들기' 버튼
                 ElevatedButton(
                   onPressed: () {
@@ -41,112 +47,38 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16.0), // 검색 창과 버튼 사이 간격 조절
+            SizedBox(height: 25.0), // 검색 창과 버튼 사이 간격 조절
 
-            // 큰 사각형 안에 작은 사각형 4개를 1X4 형태로 배열
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
-                color: Colors.grey[300],
+                color: Colors.grey[450],
               ),
               padding: EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // 좌측 정렬
-                children: [
-                  _buildSmallRectangle('제목 1', '<진행 중>', Colors.deepOrange, context),
-                  SizedBox(height: 8.0),
-                  _buildSmallRectangle('제목 2', '<진행 중>', Colors.deepOrange, context),
-                  SizedBox(height: 8.0),
-                  _buildSmallRectangle('제목 3', '<종료>', Colors.grey, context),
-                  SizedBox(height: 8.0),
-                  _buildSmallRectangle('제목 4', '<진행 중>', Colors.deepOrange, context),
-                ],
-              ),
+              child: FirestoreListView<Map<String,dynamic>>(
+                pageSize: 5,
+                query: firestore.collection('Survey').orderBy('write_date'),
+                itemBuilder: (context,snapshot){
+                  return SurveyCard(docData: snapshot);
+                }
+              )
             ),
-            SizedBox(width: 8.0)
+            ElevatedButton(
+              onPressed: () {
+                // '만들기' 버튼을 눌렀을 때의 동작을 정의
+              },
+              child: Text('설문 작성(N냥)'),
+            ),
             // 나머지 컨텐츠들을 추가하는 부분
-            // ...
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSmallRectangle(String title, String subText, Color backgroundColor, BuildContext context) {
-    return GestureDetector( // GestureDetector 추가
-      onTap: () {
-        // 화살표를 클릭했을 때의 동작을 정의
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => InnerPostScreen(title: title, subText: subText),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.0),
-          color: backgroundColor, // 배경색 변경
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Align(
-            alignment: Alignment.centerLeft, // 좌측 정렬
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8.0),
-                Text(subText, style: TextStyle(fontSize: 16.0)),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class InnerPostScreen extends StatelessWidget {
-  final String title;
-  final String subText;
-
-  const InnerPostScreen({required this.title, required this.subText});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              subText,
-              style: TextStyle(fontSize: 18.0),
-            ),
-            // 여기에 내부 게시글 컨텐츠를 추가할 수 있음
           ],
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
