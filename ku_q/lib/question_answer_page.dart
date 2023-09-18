@@ -92,9 +92,10 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
           elevation: 0,
         ),
 
-        body: Center(
-          child: Stack(
-            children: [
+        body: Stack(
+          children: [
+            Center(
+              child:
               /* 질문글 내용 보여주기 */
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
@@ -120,6 +121,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                   ]
                               )
                           ),
+
                           FutureBuilder<QuerySnapshot> (
                               future: docRef.collection('Answer').orderBy('writeDate').get(),
                               builder: (context, snapshot) {
@@ -231,9 +233,11 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                               ]
                                           )
                                       ),
+
+                                      /* 답변 리스트 보여주기 */
                                       Container(
                                         margin: const EdgeInsets.fromLTRB(0, 40, 0, 150),
-                                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
                                         width: MediaQuery.of(context).size.width * 0.9,
                                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.black26),
                                         child: Column(
@@ -251,41 +255,41 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                   ),
                 ),
               ),
-
-              /* 이 밑으로 답변 작성 관련 부분 */
-              Positioned(
-                  bottom: MediaQuery.of(context).size.height * 0.1,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    // height: 30,
-                    child: TextField(
-                      controller: answerController,
-                      onChanged: (value) {
-                        setState(() {
-                          answer = value;
-                        });
-                      },
-                      maxLines: null,
-                      maxLength: 500,
-                      textAlign: TextAlign.left,
-                      textAlignVertical: TextAlignVertical.center,
-                      style: const TextStyle(fontSize: 15),
-                      decoration: InputDecoration(
-                        // contentPadding: const EdgeInsets.only(top: 8, left: 8),
-                          counterText: "",
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: "답변을 입력해주세요",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(90),
-                              borderSide: const BorderSide(width: 10, style: BorderStyle.none)
-                          )
-                      ),
+            ),
+            /* 이 밑으로 답변 작성 관련 부분 */
+            Positioned(
+                bottom: MediaQuery.of(context).size.height * 0.1,
+                left: MediaQuery.of(context).size.width * 0.05,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  // height: 30,
+                  child: TextField(
+                    controller: answerController,
+                    onChanged: (value) {
+                      setState(() {
+                        answer = value;
+                      });
+                    },
+                    maxLines: null,
+                    maxLength: 500,
+                    textAlign: TextAlign.left,
+                    textAlignVertical: TextAlignVertical.center,
+                    style: const TextStyle(fontSize: 15),
+                    decoration: InputDecoration(
+                      // contentPadding: const EdgeInsets.only(top: 8, left: 8),
+                        counterText: "",
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: "답변을 입력해주세요",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(90),
+                            borderSide: const BorderSide(width: 10, style: BorderStyle.none)
+                        )
                     ),
-                  )
-              )
-            ],
-          ),
+                  ),
+                )
+            )
+          ]
         ),
 
         /* 답변하기 버튼 */

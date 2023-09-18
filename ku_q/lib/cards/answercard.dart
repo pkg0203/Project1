@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
+
 class AnswerCard extends StatefulWidget {
 
   DocumentSnapshot<Object?> docData;
@@ -40,43 +42,69 @@ class _AnswerCardState extends State<AnswerCard> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Container(
-            // width: MediaQuery.of(context).size.width * 0.8,
-              margin: const EdgeInsets.only(bottom: 15),
-              padding: const EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
-              ),
-              child: Column(
-                  children: [
-                    Container(
-                        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.03),
+            margin: EdgeInsets.only(bottom: 10),
+            child: Stack(
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
+                  ),
+                  child: ExpansionTile(
+                    title: Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            height: 50
+                          ),
+                          Text(snapshot.data['nickName'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          Text(
+                            DateFormat('   yyyy.MM.dd  HH:mm').format(DateTime.parse(widget.docData['writeDate'].toDate().toString())),
+                            style: TextStyle(fontSize: 12)
+                          ),
+                        ]
+                      ),
+                    ),
+                    trailing: SizedBox(width: 0),
+                    subtitle: Text(widget.docData['content']),
+                    children: [
+                      Container(
                         height: 50,
                         child: Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.account_circle_rounded),
-                                iconSize: 40,
-                                onPressed: () {},
-                              ),
-                              Text(snapshot.data['nickName'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                              Text(
-                                  DateFormat('   yyyy.MM.dd  HH:mm').format(DateTime.parse(widget.docData['writeDate'].toDate().toString())),
-                                  style: const TextStyle(fontSize: 11)
-                              ),
-                              const Spacer(),
-                              const Icon(Icons.local_fire_department, color: Colors.red),
-                              IconButton(onPressed: () {}, icon: const Icon(Icons.thumb_up, color: Colors.black), splashRadius: 1,),
-                            ]
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                color: Colors.red,
+                              )
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                color: Colors.blue,
+                              )
+                            )
+                          ]
                         )
-                    ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.03),
-                        child: Text(widget.docData['content'])
-                    )
-                  ]
-              )
+                      )
+                    ],
+                  ),
+                ),
+                Positioned(
+                  left: 16,
+                  top: 5,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 40,
+                    onPressed: () => print('check'),
+                    icon: Icon(Icons.account_circle_rounded)
+                  ),
+                )
+              ]
+            ),
           );
         }
         else {
