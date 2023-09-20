@@ -1,0 +1,399 @@
+import 'dart:ffi';
+
+import 'package:flutter/material.dart';
+import 'package:ku_q/screens/mypagescreen.dart';
+import 'package:get/get.dart';
+//import 'package:ku_q/icons/my_flutter_app_icons.dart';
+import 'package:ku_q/cards/charactercard.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _Settings();
+}
+
+class _Settings extends State<SettingsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {Get.to(const MyPageScreen(), transition: Transition.downToUp);},
+          icon: const Icon(Icons.backspace_outlined, color: Colors.black,),
+        ),
+        title: const Text(
+          '설정',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: ListView(
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Square(),
+              Square2(),
+              Square3(),
+              Square4(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Square extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: const EdgeInsets.all(10.0),
+      //height: MediaQuery.of(context).size.height * 0.10,
+      width: MediaQuery.of(context).size.width * 0.9,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black26, width: 2),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: const Icon(
+                    Icons.person_pin,
+                    size: 50,
+                    color: Colors.black54,
+                  ) //나중에는 여기에 프로필 이미지 넣기
+              ),
+              const SizedBox(width: 10,),
+              const Column(
+                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'dajulie',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    '김다빈 / 환경생태공학부',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Divider(thickness: 1, height: 1, color: Colors.black26),
+          const SizedBox(
+            height: 10,
+          ),
+          const Text(
+            '계정 정보',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: null,
+                child: Text(
+                  '이메일  ',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Text('dajulie@korea.ac.kr'),
+              TextButton(
+                onPressed: null,
+                child: Text(
+                  ">",
+                  style: TextStyle(
+                    color: Colors.black,
+                    //fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Row(
+            children: [
+              TextButton(
+                onPressed: null,
+                child: Text(
+                  '내 정보 관리',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+
+            ],
+          ),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: null,
+                child: Text(
+                  '비밀번호 변경',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: null,
+                child: Text(
+                  ">",
+                  style: TextStyle(
+                    color: Colors.black,
+                    //fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Square2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: const EdgeInsets.all(10.0),
+      //height: MediaQuery.of(context).size.height * 0.30,
+      width: MediaQuery.of(context).size.width * 0.9,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black26, width: 2),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: const Column(
+        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '앱 설정',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '개인 / 보안',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '화면 설정',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '알림 설정',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '기타     ',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Square3 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: const EdgeInsets.all(10.0),
+      //height: MediaQuery.of(context).size.height * 0.30,
+      width: MediaQuery.of(context).size.width * 0.9,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black26, width: 2),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: const Column(
+        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '이용 안내',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '공지사항',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '앱 버전',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '커뮤니티 이용규칙',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '이용약관',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '개인정보 처리방침',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '고객센터',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Square4 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: const EdgeInsets.all(10.0),
+      //height: MediaQuery.of(context).size.height * 0.30,
+      width: MediaQuery.of(context).size.width * 0.9,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black26, width: 2),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: const Column(
+        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '기타',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '서비스 이용 동의',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '이용제한 내역',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '회원탈퇴',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: null,
+            child: Text(
+              '로그아웃',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

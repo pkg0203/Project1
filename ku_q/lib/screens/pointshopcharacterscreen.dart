@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
@@ -10,26 +7,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ku_q/cards/charactercard.dart';
 //import 'package:ku_q/screens/characterdetailscreen.dart';
 
-
-class PointShopScreen extends StatefulWidget {
-  const PointShopScreen({super.key});
+class PointShopCharacterScreen extends StatefulWidget {
+  const PointShopCharacterScreen({super.key});
 
   @override
-  State<PointShopScreen> createState() => _PointShopScreenState();
+  State<PointShopCharacterScreen> createState() =>
+      _PointShopCharacterScreenState();
 }
 
-class _PointShopScreenState extends State<PointShopScreen> {
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.orange,
-      child: Text('what...'),
-    );
-  }
-
-   */
-
+class _PointShopCharacterScreenState extends State<PointShopCharacterScreen> {
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   static const _pageSize = 5;
@@ -140,10 +126,10 @@ class _PointShopScreenState extends State<PointShopScreen> {
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate(
                 itemBuilder: (context, dynamic item, index) {
-                  return CharacterCard(docData: item);
-                }),
+              return CharacterCard(docData: item);
+            }),
             separatorBuilder: (BuildContext context, int index) =>
-            const Divider(
+                const Divider(
               height: 5,
               color: Colors.grey,
             ),

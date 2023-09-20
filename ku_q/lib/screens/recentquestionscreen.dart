@@ -8,6 +8,8 @@ import 'package:ku_q/make_question_page.dart';
 import 'package:get/get.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
+import '../cards/surveycard.dart';
+
 class RecentQuestionScreen extends StatefulWidget {
   const RecentQuestionScreen({super.key});
 
