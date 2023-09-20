@@ -4,10 +4,14 @@ import 'package:get/get.dart';
 import 'landingpage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+bool isFirebaseReady = true;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+  await Firebase.initializeApp().catchError((e) {
+    isFirebaseReady = false;
+    print(e);
+  });
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +22,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
 
-      home: LandingPage(),
+      home: const LandingPage(),
+      theme: ThemeData(fontFamily: 'NanumSquare'),
+      themeMode: ThemeMode.system,
     );
   }
 }

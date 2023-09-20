@@ -1,5 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ku_q/my_flutter_app_icons.dart';
+import 'package:ku_q/bookmarked_posts_page.dart';
+import 'package:ku_q/mainpage.dart';
+import 'package:ku_q/screens/pointshopcharacterscreen.dart';
+import 'package:ku_q/screens/myprofilescreen.dart';
+import 'package:ku_q/screens/pointshopscreen.dart';
+import 'package:ku_q/screens/settings.dart';
+import 'package:get/get.dart';
+
+import '../written_posts_page.dart';
+//import 'package:ku_q/my_flutter_app_icons.dart';
 
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({super.key});
@@ -9,6 +20,10 @@ class MyPageScreen extends StatefulWidget {
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
+
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
+  FirebaseAuth fireAuth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,12 +35,18 @@ class _MyPageScreenState extends State<MyPageScreen> {
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.white,
-          actions: [IconButton(onPressed: null, icon: Icon(Icons.settings))],
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Get.to(const Settings(), transition: Transition.downToUp);
+                },
+                icon: const Icon(Icons.settings, color: Colors.black,))
+          ],
         ),
         body: Column(
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
               height: MediaQuery.of(context).size.height * 0.25,
               width: MediaQuery.of(context).size.width * 0.9,
               margin: const EdgeInsets.only(top: 30),
@@ -43,36 +64,51 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 5,),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       OutlineCircleButton(
-                          child: Icon(Icons.person_outline, size: 120,),
                           radius: 120.0,
                           borderSize: 0.5,
-                          onTap: null
-                      ),
+                          onTap: null,
+                          child: const Icon(
+                            Icons.person_outline,
+                            size: 120,
+                          )),
                       OutlinedButton.icon(
-                        onPressed: null,
-                        icon: Text(
-                          '내 캐릭터 관리',
-                          style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                        onPressed: () {
+                          Get.to(const MyProfileScreen(),
+                              transition: Transition.downToUp);
+                        },
+                        icon: const Text(
+                          '내 프로필 관리',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
                         ),
-                        label: Icon(Icons.arrow_right_alt),
+                        label: const Icon(
+                          Icons.arrow_right_alt,
+                          color: Colors.black,
+                        ),
                         style: OutlinedButton.styleFrom(
                           shape: const StadiumBorder(),
                           backgroundColor: Colors.white,
                           side: const BorderSide(width: 2, color: Colors.white),
-                          minimumSize: Size(100, 20),
+                          minimumSize: const Size(100, 20),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(width: 20,),
+                  const SizedBox(
+                    width: 20,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                        margin: EdgeInsets.only(top: 3),
+                        padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                        margin: const EdgeInsets.only(top: 3),
                         width: MediaQuery.of(context).size.width * 0.35,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -82,19 +118,27 @@ class _MyPageScreenState extends State<MyPageScreen> {
                             width: 0,
                           ),
                         ),
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('닉네임', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
-                            Text('전공', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
+                            Text(
+                              '닉네임',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                            Text(
+                              '전공',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Container(
-                        padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                        padding: const EdgeInsets.fromLTRB(5, 10, 5, 0),
                         margin: const EdgeInsets.symmetric(vertical: 0),
                         width: MediaQuery.of(context).size.width * 0.35,
                         decoration: BoxDecoration(
@@ -108,21 +152,38 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('나의 포인트', style: TextStyle(fontSize: 12),),
-                            Text('NNN냥', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                            const Text(
+                              '나의 포인트',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            const Text(
+                              'NNN냥',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
                             OutlinedButton.icon(
-                              onPressed: null,
-                              icon: Text(
+                              onPressed: () {
+                                //Get.offAll(() => _MainPage);
+                                //Get.to(MainPage(), arguments: 0);
+                                Get.offAll(() => const PointShopScreen());
+                              },
+                              icon: const Text(
                                 '포인트샵 가기',
-                                style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold),
                               ),
-                              label: Icon(Icons.arrow_right_alt),
+                              label: const Icon(
+                                Icons.arrow_right_alt,
+                                color: Colors.black,
+                              ),
                               style: OutlinedButton.styleFrom(
                                 shape: const StadiumBorder(),
-                                backgroundColor: Color(0xFFFC896F),
+                                backgroundColor: const Color(0xFFFC896F),
                                 side: const BorderSide(
                                     width: 0, color: Colors.black26),
-                                minimumSize: Size(100, 20),
+                                minimumSize: const Size(100, 20),
                               ),
                             ),
                           ],
@@ -133,33 +194,33 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 10,),
-            Container(
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 30,
+            const SizedBox(
+              height: 10,
+            ),
+            const Row(
+              children: [
+                SizedBox(
+                  width: 30,
+                ),
+                Text(
+                  "나의 등급",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                TextButton(
+                  onPressed: null,
+                  child: Icon(
+                    Icons.question_mark_rounded,
+                    color: Colors.black,
                   ),
-                  Text(
-                    "나의 등급",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  TextButton(
-                    onPressed: null,
-                    child: Icon(
-                      Icons.question_mark_rounded,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
               height: MediaQuery.of(context).size.height * 0.12,
               width: MediaQuery.of(context).size.width * 0.9,
-              margin: EdgeInsets.only(bottom: 20),
+              margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: BorderRadius.circular(20),
@@ -174,14 +235,17 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text('등급', style: TextStyle(fontSize: 12),),
+                      const Text(
+                        '등급',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       OutlinedButton.icon(
                         onPressed: null,
-                        icon: Icon(
-                          MyFlutterApp.cat_1,
+                        icon: const Icon(
+                          Icons.check,
                           color: Color(0xFFFC896F),
                         ),
-                        label: Text(
+                        label: const Text(
                           '고양이 %d 마리',
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
@@ -189,25 +253,28 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           shape: const StadiumBorder(),
                           backgroundColor: Colors.white,
                           side: const BorderSide(width: 2, color: Colors.white),
-                          minimumSize: Size(140, 40),
+                          minimumSize: const Size(140, 40),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text('누적 채택 수', style: TextStyle(fontSize: 12),),
+                      const Text(
+                        '누적 채택 수',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       OutlinedButton.icon(
                         onPressed: null,
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.touch_app_outlined,
                           color: Color(0xFFFC896F),
                         ),
-                        label: Text(
+                        label: const Text(
                           '채택 N회',
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
@@ -215,7 +282,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           shape: const StadiumBorder(),
                           backgroundColor: Colors.white,
                           side: const BorderSide(width: 2, color: Colors.white),
-                          minimumSize: Size(140, 40),
+                          minimumSize: const Size(140, 40),
                         ),
                       ),
                     ],
@@ -224,17 +291,24 @@ class _MyPageScreenState extends State<MyPageScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton.icon(
-                    onPressed: null,
-                    icon: Icon(
+                    onPressed: () async {
+                      fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid).get().then(
+                              (freshUserInfo) {
+                            List postKeys = freshUserInfo.data()?['writtenPosts'];
+                            Get.to(() => WrittenPostsPage(writtenPostKeys: postKeys));
+                          }
+                      );
+                    },
+                    icon: const Icon(
                       Icons.star_border_rounded,
                       color: Colors.black,
                     ),
-                    label: Text(
+                    label: const Text(
                       "나의 질문",
                       style: TextStyle(
                           fontSize: 20,
@@ -243,9 +317,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       textAlign: TextAlign.right,
                     ),
                   ),
-                  TextButton(
+                  const TextButton(
                     onPressed: null,
-                    child: const Text(">",
+                    child: Text(">",
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -256,17 +330,17 @@ class _MyPageScreenState extends State<MyPageScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton.icon(
                     onPressed: null,
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.question_mark,
                       color: Colors.black,
                     ),
-                    label: Text(
+                    label: const Text(
                       "나의 답변",
                       style: TextStyle(
                           fontSize: 20,
@@ -275,9 +349,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       textAlign: TextAlign.right,
                     ),
                   ),
-                  TextButton(
+                  const TextButton(
                     onPressed: null,
-                    child: const Text(">",
+                    child: Text(">",
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -288,17 +362,24 @@ class _MyPageScreenState extends State<MyPageScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton.icon(
-                    onPressed: null,
-                    icon: Icon(
+                    onPressed: () async {
+                      fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid).get().then(
+                              (freshUserInfo) {
+                            List postKeys = freshUserInfo.data()?['bookmarkedPosts'];
+                            Get.to(() => BookmarkedPostsPage(bookmarkedPostKeys: postKeys));
+                          }
+                      );
+                    },
+                    icon: const Icon(
                       Icons.question_answer_outlined,
                       color: Colors.black,
                     ),
-                    label: Text(
+                    label: const Text(
                       "내가 스크랩한 글",
                       style: TextStyle(
                           fontSize: 20,
@@ -307,9 +388,41 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       textAlign: TextAlign.right,
                     ),
                   ),
-                  TextButton(
+                  const TextButton(
                     onPressed: null,
-                    child: const Text(">",
+                    child: Text(">",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        )),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton.icon(
+                    onPressed: null,
+                    icon: const Icon(
+                      Icons.person_add_alt_1_outlined,
+                      color: Colors.black,
+                    ),
+                    label: const Text(
+                      "친구 초대",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                  const TextButton(
+                    onPressed: null,
+                    child: Text(">",
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -327,7 +440,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
 }
 
 class OutlineCircleButton extends StatelessWidget {
-  OutlineCircleButton({
+  const OutlineCircleButton({
     Key? key,
     this.onTap,
     this.borderSize = 0.5,
@@ -358,7 +471,7 @@ class OutlineCircleButton extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-              child: child ?? SizedBox(),
+              child: child ?? const SizedBox(),
               onTap: () async {
                 if (onTap != null) {
                   onTap();

@@ -17,10 +17,11 @@ class _SurveyCardState extends State<SurveyCard> {
  late num option_number;
  late QuerySnapshot option;
  //변수 초기화
- void initState(){
+ @override
+  void initState(){
    title = widget.docData['title'];
    state = widget.docData['state'];
-   option_number = widget.docData['option_number'];
+   option_number = widget.docData['Option_number'];
    widget.docData.reference.collection('Options').get().then(
        (snapshot) => option = snapshot
    );
@@ -39,6 +40,9 @@ class _SurveyCardState extends State<SurveyCard> {
       },
 
       child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        margin: EdgeInsets.only(bottom: 15),
+        height: 100,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
           color: state ? Colors.orange : Colors.grey,
@@ -47,12 +51,12 @@ class _SurveyCardState extends State<SurveyCard> {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -67,7 +71,7 @@ class _SurveyCardState extends State<SurveyCard> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   title,
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

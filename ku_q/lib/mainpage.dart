@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ku_q/screens/homescreen.dart';
 import 'package:ku_q/screens/mypagescreen.dart';
 import 'package:ku_q/screens/pointshopscreen.dart';
-import 'package:ku_q/screens/makequestionscreen.dart';
+import 'package:ku_q/make_question_page.dart';
 import 'package:ku_q/screens/recentquestionscreen.dart';
 import 'package:ku_q/screens/surveyscreen.dart';
 
@@ -20,7 +20,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   List<BottomNavigationBarItem> bottomNavItems = [
     const BottomNavigationBarItem(
@@ -46,11 +46,11 @@ class _MainPageState extends State<MainPage> {
   ];
 
   List screens = [
-    RecentQuestionScreen(),
-    SurveyScreen(),
-    HomeScreen(),
-    PointShopScreen(),
-    MyPageScreen(),
+    const RecentQuestionScreen(),
+    const SurveyScreen(),
+    const HomeScreen(),
+    const PointShopScreen(),
+    const MyPageScreen(),
   ];
 
   @override
