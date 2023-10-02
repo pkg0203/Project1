@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+//
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/screens/characterdetailscreen.dart';
@@ -63,7 +63,7 @@ class _CharacterCardState extends State<CharacterCard> {
                   */
 
                   Container(
-                    color: Colors.orange,
+                    color: Colors.red,
                     width: MediaQuery.of(context).size.width * 0.2,
                     height: MediaQuery.of(context).size.width * 0.2,
                     //child: Image.network(widget.docData['characpicurl']),

@@ -6,7 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ku_q/cards/charactercard.dart';
 //import 'package:ku_q/screens/characterdetailscreen.dart';
-
+//
 class PointShopCharacterScreen extends StatefulWidget {
   const PointShopCharacterScreen({super.key});
 

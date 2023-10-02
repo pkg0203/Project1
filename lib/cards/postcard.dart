@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ku_q/question_answer_page.dart';
-
+//
 class PostCard extends StatefulWidget {
 
   DocumentSnapshot<Object?> docData;

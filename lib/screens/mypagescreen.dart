@@ -8,7 +8,7 @@ import 'package:ku_q/bookmarked_posts_page.dart';
 import 'package:ku_q/screens/settings.dart';
 import 'package:get/get.dart';
 //import 'package:ku_q/my_flutter_app_icons.dart';
-
+//
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({super.key});
 
