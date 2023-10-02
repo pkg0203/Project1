@@ -67,12 +67,9 @@ class _CharacterCardState extends State<CharacterCard> {
                     width: MediaQuery.of(context).size.width * 0.2,
                     height: MediaQuery.of(context).size.width * 0.2,
                     //child: Image.network(widget.docData['characpicurl']),
-                    child: ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-                      child: Image(
-                        image: NetworkImage(widget.docData['characpicurl']),
-                        fit: BoxFit.cover,
-                    ),
+                    child: Image(
+                      image: NetworkImage(widget.docData['characpicurl']),
+                      fit: BoxFit.cover,
                     ),
                   ),
 
