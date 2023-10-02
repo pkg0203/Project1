@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ku_q/make_question_page.dart';
 import 'cards/answercard.dart';
+import 'cards/selected_answer_card.dart';
 
 
 class QuestionAndAnswerPage extends StatefulWidget {
@@ -66,7 +67,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
       onTap: () => {FocusManager.instance.primaryFocus?.unfocus()},
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("최신 Q&A 게시판", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,
+          title: const Text("최신 Q&A 게시판", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900,
               fontSize: 25)),
           centerTitle: true,
           leading: IconButton(icon: const Icon(Icons.clear, color: Colors.black),
@@ -127,14 +128,20 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   List<DocumentSnapshot> docs = snapshot.data!.docs;
-                                  var cards = docs.map((e) => AnswerCard(docData: e));
+                                  var selected = null;
+                                  for (DocumentSnapshot doc in docs) {
+                                    if (doc.id == widget.docData['selectedAnswer']) {
+                                      selected = doc;
+                                    }
+                                  }
+                                  var cards = docs.map((e) => AnswerCard(docData: e, postWriterUid: widget.userInfo.id, postRef: widget.docData.reference, selectedAnswerKey: widget.docData['selectedAnswer'],));
                                   return Column(
                                     children: [
                                       Container(
                                         // height: 300,
                                           padding: const EdgeInsets.all(20),
                                           decoration: BoxDecoration(
-                                              color: Colors.black12,
+                                              color: const Color(0xFFE2E2E2),
                                               borderRadius: BorderRadius.circular(15)
                                           ),
                                           child: Column(
@@ -175,7 +182,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                       Row(
                                                           children: [
                                                             IconButton(
-                                                              onPressed: () {
+                                                              onPressed: () async {
                                                                 if (!isLiked) {
                                                                   IncLikes();
                                                                   setState(() {
@@ -191,7 +198,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                                   });
                                                                 }
                                                               },
-                                                              icon: Icon(Icons.thumb_up, color: isLiked ? const Color(0xFFFC896F) : Colors.black),
+                                                              icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: const Color(0xFFF42C50)),
                                                               splashRadius: 20,
                                                               iconSize: 30,
                                                             ),
@@ -205,7 +212,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                       Row(
                                                         children: [
                                                           IconButton(
-                                                            onPressed: () {
+                                                            onPressed: () async {
                                                               if (!isBookmarked) {
                                                                 AddBookmark();
                                                                 setState(() {
@@ -221,7 +228,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                                 });
                                                               }
                                                             },
-                                                            icon: Icon(Icons.bookmark, color: isBookmarked ? const Color(0xFFFEC860) : Colors.black),
+                                                            icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border, color: const Color(0xFFFEC860)),
                                                             splashRadius: 20,
                                                             iconSize: 30,
                                                           ),
@@ -234,12 +241,28 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                           )
                                       ),
 
-                                      /* 답변 리스트 보여주기 */
+                                      widget.docData['selectedAnswer'] == "not_yet" ?
+                                          const SizedBox():
                                       Container(
-                                        margin: const EdgeInsets.fromLTRB(0, 40, 0, 150),
+                                        margin: const EdgeInsets.fromLTRB(0, 40, 0, 0),
                                         padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
                                         width: MediaQuery.of(context).size.width * 0.9,
                                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.black26),
+                                        child: Column(
+                                          children: [
+                                            const SizedBox(width: double.infinity, child: Text("📌 호랑이의 선택!", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22),)),
+                                            const SizedBox(height: 10),
+                                            SelectedAnswerCard(docData: selected, postWriterUid: widget.userInfo.id, postRef: widget.docData.reference, selectedAnswerKey: widget.docData['selectedAnswer'],),
+                                          ],
+                                        ),
+                                      ),
+
+                                      /* 답변 리스트 보여주기 */
+                                      Container(
+                                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 150),
+                                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
+                                        width: MediaQuery.of(context).size.width * 0.9,
+                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.black12),
                                         child: Column(
                                           children: cards.toList(),
                                         ),
@@ -328,7 +351,6 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                     await fireStore.runTransaction((transaction) async {
                                       transaction.set(docRef.collection('Answer').doc(postKey),
                                           {
-                                            "key": postKey,
                                             "content": answer,
                                             "writerUid": fireAuth.currentUser?.uid,
                                             "writeDate": date,
@@ -357,13 +379,13 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
     );
   }
 
-  void IncLikes() {
-    fireStore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
+  void IncLikes() async {
+    await fireStore.runTransaction((transaction) async {
+      /*final snapshot = await transaction.get(docRef);
       // Note: this could be done without a transaction
       //       by updating the population using FieldValue.increment()
-      final newLike = snapshot.get("likeCount") + 1;
-      transaction.update(docRef, {"likeCount": newLike});
+      final newLike = snapshot.get("likeCount") + 1;*/
+      transaction.update(docRef, {"likeCount": FieldValue.increment(1)});
       transaction.update(docRef, {"likedBy": FieldValue.arrayUnion([fireAuth.currentUser?.uid])});
     }).then(
           (value) => {print("success")},
@@ -371,13 +393,13 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
     );
   }
 
-  void DecLikes() {
-    fireStore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
+  void DecLikes() async {
+    await fireStore.runTransaction((transaction) async {
+      /*final snapshot = await transaction.get(docRef);
       // Note: this could be done without a transaction
       //       by updating the population using FieldValue.increment()
-      final newLike = snapshot.get("likeCount") - 1;
-      transaction.update(docRef, {"likeCount": newLike});
+      final newLike = snapshot.get("likeCount") - 1;*/
+      transaction.update(docRef, {"likeCount": FieldValue.increment(-1)});
       transaction.update(docRef, {"likedBy": FieldValue.arrayRemove([fireAuth.currentUser?.uid])});
     }).then(
           (value) => {print("success")},
@@ -385,8 +407,8 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
     );
   }
 
-  void AddBookmark() {
-    fireStore.runTransaction((transaction) async {
+  void AddBookmark() async {
+    await fireStore.runTransaction((transaction) async {
       transaction.update(docRef, {"bookmarkCount": FieldValue.increment(1)});
       transaction.update(widget.userInfo.reference, {"bookmarkedPosts": FieldValue.arrayUnion([widget.docData['key']])});
     }).then(
@@ -395,8 +417,8 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
     );
   }
 
-  void DeleteBookmark() {
-    fireStore.runTransaction((transaction) async {
+  void DeleteBookmark() async {
+    await fireStore.runTransaction((transaction) async {
       transaction.update(docRef, {"bookmarkCount": FieldValue.increment(-1)});
       transaction.update(widget.userInfo.reference, {"bookmarkedPosts": FieldValue.arrayRemove([widget.docData['key']])});
     }).then(
