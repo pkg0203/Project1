@@ -43,75 +43,112 @@ class _AnswerCardState extends State<AnswerCard> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder (
-      future: getWriterInfo(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            child:
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.account_circle_rounded, color: Colors.black, size: 38),
-                        onPressed: () => print("아이콘 클릭"),
+        future: getWriterInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: Stack(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
                       ),
-                      Text(snapshot.data['nickName'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black)),
-                      Text(
-                          DateFormat('   yyyy.MM.dd  HH:mm').format(DateTime.parse(widget.docData['writeDate'].toDate().toString())),
-                          style: const TextStyle(fontSize: 12, color: Colors.black)
+                      child: ExpansionTile(
+                        title: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                  width: 40,
+                                  height: 50
+                              ),
+                              Text(snapshot.data['nickName'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              Text(
+                                  DateFormat('   yyyy.MM.dd  HH:mm').format(DateTime.parse(widget.docData['writeDate'].toDate().toString())),
+                                  style: const TextStyle(fontSize: 12)
+                              ),
+                            ]
+                        ),
+                        trailing: const SizedBox(width: 0),
+                        subtitle: Text(widget.docData['content']),
+                        children: [
+                          SizedBox(
+                              height: 50,
+                              child: Row(
+                                  children: [
+                                    Expanded(
+                                        flex: 7,
+                                        child: Container()
+                                    ),
+                                    Expanded(
+                                        flex: 5,
+                                        child: SizedBox(
+                                          height: 35,
+                                          child: widget.postWriterUid == fireAuth.currentUser?.uid ? RawMaterialButton(
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90), side: BorderSide()),
+                                            onPressed: () async {
+                                              _SelectAnswer();
+                                            },
+                                            child: const Text("채택하기", style: TextStyle(fontWeight: FontWeight.w900))
+                                          ) :
+                                              Container(),
+                                        )
+                                    ),
+                                    Expanded(
+                                        flex: 5,
+                                        child: Container(
+                                          //color: Colors.blue,
+                                        )
+                                    ),
+                                    Expanded(
+                                        flex: 2,
+                                        child: PopupMenuButton(
+                                          padding: EdgeInsets.zero,
+                                          icon: const Icon(Icons.more_vert, color: Colors.black, size: 23),
+                                          itemBuilder: (BuildContext context) => [const PopupMenuItem(value: 0, child: Text("신고하기"))],
+                                          onSelected: (v) async {
+                                            print("신고하기");
+                                          },
+                                        )
+                                    )
+                                  ]
+                              )
+                          )
+                        ],
                       ),
-                      const Spacer(),
-                      const Icon(Icons.local_fire_department_sharp, color: Colors.red),
-                      IconButton(
-                        icon: const Icon(Icons.thumb_up),
-                        onPressed: () => print("공감 클릭"),
+                    ),
+                    Positioned(
+                      left: 16,
+                      top: 5,
+                      child: IconButton(
+                          padding: EdgeInsets.zero,
+                          iconSize: 40,
+                          onPressed: () => print('check'),
+                          icon: const Icon(Icons.account_circle_rounded)
+                      ),
+                    ),
+                    Positioned(
+                      right: 10,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.local_fire_department_rounded, color: Colors.red),
+                          IconButton(
+                            onPressed: () => print('check'),
+                            icon: const Icon(Icons.thumb_up_alt)
+                          ),
+                        ],
                       )
-                    ]
-                  ),
-                  Container(padding: const EdgeInsets.symmetric(horizontal: 12), width: double.infinity, child: Text(widget.docData['content'])),
-                  Container(
-                    height: 20,
-                    alignment: Alignment.centerRight,
-                    child: PopupMenuButton(
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(Icons.more_vert, size: 20),
-                      itemBuilder: widget.postWriterUid == fireAuth.currentUser?.uid ? (context) => [
-                        const PopupMenuItem(value: 1, child: Text("채택하기")),
-                        const PopupMenuItem(value: 0, child: Text("신고하기")),
-                      ] :
-                          (context) => [
-                        const PopupMenuItem(value: 0, child: Text("신고하기")),
-                      ],
-                      onSelected: (v) {
-                        switch (v) {
-                          case 0: {
-                            print("신고하기");
-                          }
-                          case 1: {
-                            _SelectAnswer();
-                          }
-                        }
-                      },
-                    )
-                  )
-                ],
+                    ),
+                  ]
               ),
-            ),
-          );
+            );
+          }
+          else {
+            return const Center(child: CircularProgressIndicator());
+          }
         }
-        else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      }
     );
   }
 
@@ -148,5 +185,4 @@ class _AnswerCardState extends State<AnswerCard> {
       );
     }
   }
-
 }
