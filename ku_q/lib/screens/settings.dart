@@ -1,29 +1,31 @@
 import 'dart:ffi';
-
+//
 import 'package:flutter/material.dart';
+//import 'package:ku_q/screens/alarm_setting.dart';
 import 'package:ku_q/screens/mypagescreen.dart';
+//import 'package:ku_q/screens/alarm_setting.dart';
 import 'package:get/get.dart';
 //import 'package:ku_q/icons/my_flutter_app_icons.dart';
 import 'package:ku_q/cards/charactercard.dart';
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+class Settings extends StatefulWidget {
+  const Settings({super.key});
 
   @override
-  State<SettingsScreen> createState() => _Settings();
+  State<Settings> createState() => _Settings();
 }
 
-class _Settings extends State<SettingsScreen> {
+class _Settings extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          onPressed: () {Get.to(const MyPageScreen(), transition: Transition.downToUp);},
-          icon: const Icon(Icons.backspace_outlined, color: Colors.black,),
+          onPressed: () {Navigator.pop(context);},
+          icon: Icon(Icons.backspace_outlined, color: Colors.black,),
         ),
-        title: const Text(
+        title: Text(
           '설정',
           style: TextStyle(
             color: Colors.black,
@@ -31,18 +33,20 @@ class _Settings extends State<SettingsScreen> {
           ),
         ),
       ),
-      body: ListView(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Square(),
-              Square2(),
-              Square3(),
-              Square4(),
-            ],
-          ),
-        ],
+      body: Container(
+        child: ListView(
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Square(),
+                Square2(),
+                Square3(),
+                Square4(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -52,8 +56,8 @@ class Square extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-      margin: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: EdgeInsets.all(10.0),
       //height: MediaQuery.of(context).size.height * 0.10,
       width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
@@ -69,14 +73,14 @@ class Square extends StatelessWidget {
             children: [
               ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: const Icon(
+                  child: Icon(
                     Icons.person_pin,
                     size: 50,
                     color: Colors.black54,
                   ) //나중에는 여기에 프로필 이미지 넣기
               ),
-              const SizedBox(width: 10,),
-              const Column(
+              SizedBox(width: 10,),
+              Column(
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -92,18 +96,18 @@ class Square extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
+          SizedBox(
             height: 10,
           ),
-          const Divider(thickness: 1, height: 1, color: Colors.black26),
-          const SizedBox(
+          Divider(thickness: 1, height: 1, color: Colors.black26),
+          SizedBox(
             height: 10,
           ),
-          const Text(
+          Text(
             '계정 정보',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
@@ -119,7 +123,7 @@ class Square extends StatelessWidget {
               Text('dajulie@korea.ac.kr'),
               TextButton(
                 onPressed: null,
-                child: Text(
+                child: const Text(
                   ">",
                   style: TextStyle(
                     color: Colors.black,
@@ -130,7 +134,7 @@ class Square extends StatelessWidget {
               ),
             ],
           ),
-          const Row(
+          Row(
             children: [
               TextButton(
                 onPressed: null,
@@ -145,7 +149,7 @@ class Square extends StatelessWidget {
 
             ],
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
@@ -160,7 +164,7 @@ class Square extends StatelessWidget {
               ),
               TextButton(
                 onPressed: null,
-                child: Text(
+                child: const Text(
                   ">",
                   style: TextStyle(
                     color: Colors.black,
@@ -181,8 +185,8 @@ class Square2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-      margin: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: EdgeInsets.all(10.0),
       //height: MediaQuery.of(context).size.height * 0.30,
       width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
@@ -190,7 +194,7 @@ class Square2 extends StatelessWidget {
         border: Border.all(color: Colors.black26, width: 2),
         borderRadius: BorderRadius.circular(15),
       ),
-      child: const Column(
+      child: Column(
         //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -208,18 +212,101 @@ class Square2 extends StatelessWidget {
               ),
             ),
           ),
-          TextButton(
-            onPressed: null,
-            child: Text(
-              '화면 설정',
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.black,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: null,
+                child: Text(
+                  '테마 설정      ',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
+                ),
               ),
-            ),
+              Text('시스템 기본 값'),
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      barrierDismissible: true, // 바깥 영역 터치시 닫을지 여부
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TextButton(
+                                child: const Text('시스템 기본 값', style: TextStyle(color: Colors.black),),
+                                onPressed: () {
+                                  //화면 테마 변경
+                                  //Navigator.of(context).pop();
+                                },
+                              ),
+                              Divider(thickness: 1, height: 1, color: Colors.black26),
+                              TextButton(
+                                child: const Text('라이트 모드', style: TextStyle(color: Colors.black),),
+                                onPressed: () {
+                                  //화면 테마 변경
+                                  //Navigator.of(context).pop();
+                                },
+                              ),
+                              Divider(thickness: 1, height: 1, color: Colors.black26),
+                              TextButton(
+                                child: const Text('다크 모드', style: TextStyle(color: Colors.black),),
+                                onPressed: () {
+                                  //화면 테마 변경
+                                  //Navigator.of(context).pop();
+                                },
+                              ),
+                              Divider(thickness: 1, height: 1, color: Colors.black26),
+                              TextButton(
+                                child: const Text('취소', style: TextStyle(color: Colors.black),),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ),
+                          insetPadding: const  EdgeInsets.fromLTRB(100,250,100,250),
+                          /*
+                          actions: [
+                            TextButton(
+                              child: const Text('확인'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                          */
+                        );
+                      }
+                  );
+                },
+                icon: Icon(Icons.keyboard_arrow_right),
+              )
+              /*
+              TextButton(
+                onPressed: null,
+                child: const Text(
+                  ">",
+                  style: TextStyle(
+                    color: Colors.black,
+                    //fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              */
+            ],
           ),
           TextButton(
-            onPressed: null,
+            onPressed: (){
+              /*
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AlarmSettings()));
+              */
+            },
             child: Text(
               '알림 설정',
               style: TextStyle(
@@ -248,8 +335,8 @@ class Square3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-      margin: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: EdgeInsets.all(10.0),
       //height: MediaQuery.of(context).size.height * 0.30,
       width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
@@ -257,7 +344,7 @@ class Square3 extends StatelessWidget {
         border: Border.all(color: Colors.black26, width: 2),
         borderRadius: BorderRadius.circular(15),
       ),
-      child: const Column(
+      child: Column(
         //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -335,8 +422,8 @@ class Square4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-      margin: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+      margin: EdgeInsets.all(10.0),
       //height: MediaQuery.of(context).size.height * 0.30,
       width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
@@ -344,7 +431,7 @@ class Square4 extends StatelessWidget {
         border: Border.all(color: Colors.black26, width: 2),
         borderRadius: BorderRadius.circular(15),
       ),
-      child: const Column(
+      child: Column(
         //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
