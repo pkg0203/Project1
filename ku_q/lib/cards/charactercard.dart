@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/screens/characterdetailscreen.dart';
 import 'package:get/get.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class CharacterCard extends StatefulWidget {
   DocumentSnapshot<Object?> docData;
@@ -13,6 +16,13 @@ class CharacterCard extends StatefulWidget {
 }
 
 class _CharacterCardState extends State<CharacterCard> {
+  //StringBuffer imageurl = widget.docData['characpicurl'];
+  //String imageurl = 'https://firebasestorage.googleapis.com/v0/b/ku-q-6124f.appspot.com/o/IMG_6193.JPG?alt=media&token=fb42cded-03a2-4730-bbd7-b8649de93b97';
+  static Future<dynamic> loadFromStorage(
+      BuildContext context, String image) async {
+    return await FirebaseStorage.instance.ref().child(image).getDownloadURL();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,11 +44,38 @@ class _CharacterCardState extends State<CharacterCard> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  /*
                   Container(
-                    color: Colors.black26,
+                      color: Colors.orange,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      height: MediaQuery.of(context).size.width * 0.2,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: NetworkImage(widget.docData['characpicurl']),
+                              fit: BoxFit.cover)),
+                      child:BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                        child: Container(
+                            color: Colors.black.withOpacity(0.1)
+                        ),
+                      )
+                  ),
+                  */
+
+                  Container(
+                    color: Colors.orange,
                     width: MediaQuery.of(context).size.width * 0.2,
                     height: MediaQuery.of(context).size.width * 0.2,
+                    //child: Image.network(widget.docData['characpicurl']),
+                    child: ImageFiltered(
+                      imageFilter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                      child: Image(
+                        image: NetworkImage(widget.docData['characpicurl']),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
+
                   /*
                 Expanded(flex: 1, child: Text(widget.docData['name'], overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 10)))
@@ -48,98 +85,85 @@ class _CharacterCardState extends State<CharacterCard> {
           Expanded(
             flex: 4,
             child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(
                 flex: 2,
                 child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                            //color: Colors.red,
-                            //padding: const EdgeInsets.only(left: 15),
-                            // color: Colors.yellow,
-                            child: Text(
-                          widget.docData['name'],
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        )),
-                      ),
-                      Expanded(
-                        flex: 8,
-                        child: Container(
-                            //color: Colors.orange,
-                            child: Row(
-                          children: [
-                            OutlinedButton.icon(
-                              onPressed: null,
-                              icon: Icon(
-                                Icons.star,
-                                color: Colors.yellow,
-                                size: 15,
-                              ),
-                              label: Text(
-                                '대표',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.white),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                shape: const StadiumBorder(),
-                                backgroundColor: Colors.black87,
-                                side: const BorderSide(
-                                    width: 0, color: Colors.white),
-                                minimumSize: Size(40, 25),
-                              ),
-                            ),
-                            OutlinedButton(
-                              onPressed: null,
-                              child: Text(
-                                widget.docData['states'],
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.white),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                shape: const StadiumBorder(),
-                                backgroundColor: Colors.purple,
-                                side: const BorderSide(
-                                    width: 0, color: Colors.white),
-                                minimumSize: Size(40, 25),
-                              ),
-                            ),
-                            /*
-                              TextButton(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        //color: Colors.red,
+                        //padding: const EdgeInsets.only(left: 15),
+                        // color: Colors.yellow,
+                          child: Text(
+                            widget.docData['name'],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          )),
+                    ),
+                    Expanded(
+                      flex: 8,
+                      child: Container(
+                        //color: Colors.orange,
+                          child: Row(
+                            children: [
+                              OutlinedButton.icon(
                                 onPressed: null,
-                                child: Text(
-                                  widget.docData['states'],
-                                  //maxLines: 1,
-                                  //overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                                icon: Icon(
+                                  Icons.star,
+                                  color: Colors.yellow,
+                                  size: 15,
+                                ),
+                                label: Text(
+                                  '대표',
+                                  style:
+                                  TextStyle(fontSize: 12, color: Colors.white),
                                 ),
                                 style: OutlinedButton.styleFrom(
                                   shape: const StadiumBorder(),
-                                  backgroundColor: Colors.black12,
-                                  side: const BorderSide(width: 0, color: Colors.white),
-                                  minimumSize: Size(50, 30),
+                                  backgroundColor: Colors.black87,
+                                  side: const BorderSide(
+                                      width: 0, color: Colors.white),
+                                  minimumSize: Size(40, 30),
                                 ),
                               ),
-                              */
-                          ],
-                        )
-
-                            /*
-                          Text(
-                            "N 시간 전",
-                            style: TextStyle(fontSize: 10),
-                          )
-                              */
-                            ),
-                      )
-                    ]),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.15,
+                                height: 30,
+                                child: (() {
+                                  if (widget.docData['states'] == '보유중') {
+                                    return TextButton(
+                                      onPressed: null,
+                                      child: Text(
+                                        '보유중',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 10, color: Colors.white),
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        shape: const StadiumBorder(),
+                                        backgroundColor: Colors.purple,
+                                        side: const BorderSide(
+                                            width: 0, color: Colors.white),
+                                        //minimumSize: Size(40, 15),
+                                      ),
+                                    );
+                                  }
+                                  else {
+                                    return const Text('');
+                                  }
+                                })(),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                ),
               ),
               Expanded(
                   flex: 5,
@@ -165,8 +189,8 @@ class _CharacterCardState extends State<CharacterCard> {
                           flex: 1,
                           child: OutlinedButton.icon(
                             onPressed: () {
-                              Get.to(CharacterDetailScreen(),
-                                  transition: Transition.downToUp);
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => CharacterDetailScreen()));
                             },
                             icon: Icon(
                               Icons.arrow_forward_ios,
@@ -176,7 +200,7 @@ class _CharacterCardState extends State<CharacterCard> {
                             label: Text(
                               '꾸미기',
                               style:
-                                  TextStyle(fontSize: 15, color: Colors.black),
+                              TextStyle(fontSize: 15, color: Colors.black),
                             ),
                             style: OutlinedButton.styleFrom(
                               shape: const StadiumBorder(),

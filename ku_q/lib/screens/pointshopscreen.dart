@@ -19,17 +19,6 @@ class PointShopScreen extends StatefulWidget {
 }
 
 class _PointShopScreenState extends State<PointShopScreen> {
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.orange,
-      child: Text('what...'),
-    );
-  }
-
-   */
-
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   static const _pageSize = 5;
@@ -111,27 +100,20 @@ class _PointShopScreenState extends State<PointShopScreen> {
                       //minimumSize: Size(100, 30),
                     ),
                   ),
+                  /*
                   IconButton(
                     onPressed: () {
-                      Get.back();
+                      Navigator.pop(context);
                     },
                     icon: Icon(
                       Icons.clear,
                       color: Colors.black,
                     ),
                   ),
+                  */
                 ],
               ),
             ),
-            /*IconButton(
-                onPressed: () {
-                  Get.back();
-                },
-                icon: Icon(
-                  Icons.clear,
-                  color: Colors.black,
-                )),
-             */
           ],
         ),
         body: Padding(
@@ -148,73 +130,6 @@ class _PointShopScreenState extends State<PointShopScreen> {
               color: Colors.grey,
             ),
           ),
-          /*
-            child: Column(
-            children: [
-              SizedBox(height: 20,),
-              Container(
-                color: Colors.black12,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 30,
-                    ),
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: Container(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Container(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text('니니', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                              SizedBox(width: 20,),
-                              OutlinedButton(
-                                onPressed: null,
-                                child: Text(
-                                  '보유중',
-                                  style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  shape: const StadiumBorder(),
-                                  backgroundColor: Colors.white,
-                                  side: const BorderSide(width: 2, color: Colors.white),
-                                  minimumSize: Size(100, 20),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text('니니는 용맹한 아이입니다!'),
-                          OutlinedButton.icon(
-                            onPressed: null,
-                            icon: Text(
-                              '전체 캐릭터 보기',
-                              style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            label: Icon(Icons.arrow_right_alt),
-                            style: OutlinedButton.styleFrom(
-                              shape: const StadiumBorder(),
-                              backgroundColor: Colors.white,
-                              side: const BorderSide(width: 2, color: Colors.white),
-                              minimumSize: Size(100, 20),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          )
-            */
         ),
       ),
     );

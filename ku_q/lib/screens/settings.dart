@@ -1,7 +1,7 @@
 import 'dart:ffi';
 //
 import 'package:flutter/material.dart';
-//import 'package:ku_q/screens/alarm_setting.dart';
+import 'package:ku_q/screens/alarm_setting.dart';
 import 'package:ku_q/screens/mypagescreen.dart';
 //import 'package:ku_q/screens/alarm_setting.dart';
 import 'package:get/get.dart';
@@ -302,10 +302,10 @@ class Square2 extends StatelessWidget {
           ),
           TextButton(
             onPressed: (){
-              /*
+
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => AlarmSettings()));
-              */
+
             },
             child: Text(
               '알림 설정',
