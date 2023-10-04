@@ -1,5 +1,6 @@
 import 'dart:ffi';
 //
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/screens/mypagescreen.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,10 @@ class AlarmSettings extends StatefulWidget {
 
   @override
   State<AlarmSettings> createState() => _AlarmSettings();
+}
+
+bool _isChecked = false;
+void setState(Null Function() param0) {
 }
 
 class _AlarmSettings extends State<AlarmSettings> {
@@ -81,6 +86,15 @@ class Square1 extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
+          ),
+          CupertinoSwitch(
+            value: _isChecked,
+            activeColor: CupertinoColors.activeBlue,
+            onChanged: (bool? value) {
+              setState(() {
+                _isChecked = value ?? false;
+              });
+            },
           ),
           TextButton(
             onPressed: null,

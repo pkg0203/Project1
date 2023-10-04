@@ -1,13 +1,14 @@
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/bookmarked_posts_page.dart';
+import 'package:ku_q/cards/userprofile.dart';
 import 'package:ku_q/mainpage.dart';
-//import 'package:ku_q/screens/pointshopcharacterscreen.dart';
 import 'package:ku_q/screens/myprofilescreen.dart';
-//import 'package:ku_q/screens/pointshopscreen.dart';
-//import 'package:ku_q/bookmarked_posts_page.dart';
 import 'package:ku_q/screens/settings.dart';
 import 'package:get/get.dart';
+
 //import 'package:ku_q/my_flutter_app_icons.dart';
 //
 class MyPageScreen extends StatefulWidget {
@@ -18,6 +19,9 @@ class MyPageScreen extends StatefulWidget {
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+  //static const int _pageSize = 2;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,9 +37,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Settings()));
+                      MaterialPageRoute(builder: (context) => UserSettings()));
                 },
-                icon: Icon(Icons.settings, color: Colors.black,))
+                icon: Icon(
+                  Icons.settings,
+                  color: Colors.black,
+                ))
           ],
         ),
         body: Container(
@@ -74,14 +81,19 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               radius: 120.0,
                               borderSize: 0.5,
                               onTap: null),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.35,
                             height: 25,
                             child: OutlinedButton.icon(
                               onPressed: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => MyProfileScreen()));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MyProfileScreen()));
                               },
                               icon: Text(
                                 '내 프로필 관리',
@@ -97,7 +109,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               style: OutlinedButton.styleFrom(
                                 shape: const StadiumBorder(),
                                 backgroundColor: Colors.white,
-                                side: const BorderSide(width: 2, color: Colors.white),
+                                side: const BorderSide(
+                                    width: 2, color: Colors.white),
                                 //minimumSize: Size(100, 20),
                               ),
                             ),
@@ -128,12 +141,14 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                 Text(
                                   '닉네임',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 13),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13),
                                 ),
                                 Text(
                                   '전공',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 13),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13),
                                 ),
                               ],
                             ),
@@ -163,9 +178,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                 Text(
                                   'NNN냥',
                                   style: TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 10,),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 /*
                                 Container(
                                   width: MediaQuery.of(context).size.width * 0.35,
@@ -218,7 +236,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       ),
                       Text(
                         "나의 등급",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                       TextButton(
@@ -265,12 +284,14 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               ),
                               label: Text(
                                 '고양이 %d 마리',
-                                style: TextStyle(fontSize: 12, color: Colors.black),
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
                               ),
                               style: OutlinedButton.styleFrom(
                                 shape: const StadiumBorder(),
                                 backgroundColor: Colors.white,
-                                side: const BorderSide(width: 2, color: Colors.white),
+                                side: const BorderSide(
+                                    width: 2, color: Colors.white),
                                 minimumSize: Size(140, 40),
                               ),
                             ),
@@ -298,12 +319,14 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               ),
                               label: Text(
                                 '채택 N회',
-                                style: TextStyle(fontSize: 12, color: Colors.black),
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
                               ),
                               style: OutlinedButton.styleFrom(
                                 shape: const StadiumBorder(),
                                 backgroundColor: Colors.white,
-                                side: const BorderSide(width: 2, color: Colors.white),
+                                side: const BorderSide(
+                                    width: 2, color: Colors.white),
                                 minimumSize: Size(140, 40),
                               ),
                             ),
@@ -383,7 +406,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton.icon(
-                        onPressed: (){
+                        onPressed: () {
                           //Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarkedPostsPage(bookmarkedPostKeys: bookmarkedPostKeys)));
                         },
                         icon: Icon(
@@ -443,6 +466,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     ],
                   ),
                 ),
+                Container(),
               ],
             ),
           ),

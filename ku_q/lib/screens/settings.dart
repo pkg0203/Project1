@@ -2,21 +2,33 @@ import 'dart:ffi';
 //
 import 'package:flutter/material.dart';
 import 'package:ku_q/screens/alarm_setting.dart';
+import 'package:ku_q/notification.dart';
 import 'package:ku_q/screens/mypagescreen.dart';
 //import 'package:ku_q/screens/alarm_setting.dart';
 import 'package:get/get.dart';
 //import 'package:ku_q/icons/my_flutter_app_icons.dart';
 import 'package:ku_q/cards/charactercard.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class UserSettings extends StatefulWidget {
+  const UserSettings({super.key});
 
   @override
-  State<Settings> createState() => _Settings();
+  State<UserSettings> createState() => _UserSettings();
 }
 
-class _Settings extends State<Settings> {
+class _UserSettings extends State<UserSettings> {
+
   @override
+  void initState() {
+    // 초기화
+    FlutterLocalNotification.init();
+
+    // 3초 후 권한 요청
+    Future.delayed(const Duration(seconds: 3),
+        FlutterLocalNotification.requestNotificationPermission());
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -71,6 +83,12 @@ class Square extends StatelessWidget {
           Row(
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Container(
+                child: TextButton(
+                  onPressed: () => FlutterLocalNotification.showNotification(),
+                  child: const Text("알림 보내기"),
+                ),
+              ),
               ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Icon(

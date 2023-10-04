@@ -13,7 +13,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          backgroundColor: Colors.black54,
+          backgroundColor: Colors.white,
           appBar: AppBar(
             leading: IconButton(
               icon: Icon(
