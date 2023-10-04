@@ -161,6 +161,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
+                            /*
                             OutlinedButton.icon(
                               onPressed: () {
                                 //Get.offAll(() => _MainPage);
@@ -186,6 +187,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                 minimumSize: const Size(100, 20),
                               ),
                             ),
+                            */
                           ],
                         ),
                       )
