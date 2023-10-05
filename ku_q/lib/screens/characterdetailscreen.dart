@@ -225,8 +225,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                                   flex: 1,
                                   child: OutlinedButton.icon(
                                     onPressed: () {
-                                      Get.to(PointShopCharacterScreen(),
-                                          transition: Transition.downToUp);
+                                      Navigator.pop(context);
                                     },
                                     icon: Icon(
                                       Icons.arrow_forward_ios,

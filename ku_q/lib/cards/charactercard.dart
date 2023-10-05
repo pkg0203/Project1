@@ -18,8 +18,8 @@ class CharacterCard extends StatefulWidget {
 class _CharacterCardState extends State<CharacterCard> {
   //StringBuffer imageurl = widget.docData['characpicurl'];
   //String imageurl = 'https://firebasestorage.googleapis.com/v0/b/ku-q-6124f.appspot.com/o/IMG_6193.JPG?alt=media&token=fb42cded-03a2-4730-bbd7-b8649de93b97';
-  static Future<dynamic> loadFromStorage(
-      BuildContext context, String image) async {
+  static Future<dynamic> loadFromStorage
+      (BuildContext context, String image) async {
     return await FirebaseStorage.instance.ref().child(image).getDownloadURL();
   }
 

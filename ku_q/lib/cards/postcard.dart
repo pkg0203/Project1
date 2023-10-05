@@ -78,7 +78,7 @@ class _PostCardState extends State<PostCard> {
                       color: const Color(0xD0D0D0D0),
                       width: 2,
                     ),
-                    color: Color(0xFFE2E2E2),
+                    color: const Color(0xFFE2E2E2),
                   ),
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   width: MediaQuery

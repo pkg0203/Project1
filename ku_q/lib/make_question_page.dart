@@ -1,12 +1,16 @@
 
 
 
+
 import 'dart:math';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ScrollBehaviorWithoutGlow extends ScrollBehavior {
   @override
@@ -28,6 +32,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
   FirebaseAuth fireAuth = FirebaseAuth.instance;
+  FirebaseStorage fireStorage = FirebaseStorage.instance;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
@@ -144,7 +149,18 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                           width: 40,
                                           height: 40,
                                           child: RawMaterialButton(
-                                              onPressed: () {},
+                                              onPressed: () async {
+                                                ImagePicker _picker = ImagePicker();
+                                                List<XFile> _images = await _picker.pickMultiImage();
+                                                if (_images.isNotEmpty) {
+                                                  for (int i = 0; i < _images.length; i++) {
+                                                    File _file = File(_images[i].path);
+                                                    await FirebaseStorage.instance
+                                                        .ref("test/multi/image_$i")
+                                                        .putFile(_file);
+                                                  }
+                                                }
+                                              },
                                               fillColor: Colors.white,
                                               elevation: 0,
                                               shape: RoundedRectangleBorder(
@@ -384,7 +400,8 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                                         "bookmarkCount": 0,
                                                         "likeCount": 0,
                                                         "likedBy": [],
-                                                        "answerCount": 0
+                                                        "answerCount": 0,
+                                                        "selectedAnswer": "not_yet"
 
                                                         }
                                                     );
