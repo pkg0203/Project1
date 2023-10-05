@@ -22,7 +22,7 @@ class MyPageScreen extends StatefulWidget {
 class _MyPageScreenState extends State<MyPageScreen> {
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
   Future getUserInfo() async {
-    final info = await fireStore.collection('UserInfo').doc('p2iuraG7h5Z77GLyTyIDOmxXpAo2').get();
+    final info = await fireStore.collection('UserInfo').doc(FirebaseAuth.instance.currentUser?.uid).get();
     return info;
   }
 
@@ -295,7 +295,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                               color: Color(0xFFFC896F),
                                             ),
                                             label: Text(
-                                              '고양이 %d 마리',
+                                              '고양이 '+snapshot.data['level'].toString()+'마리',
                                               style: TextStyle(
                                                   fontSize: 12, color: Colors.black),
                                             ),

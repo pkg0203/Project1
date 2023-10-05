@@ -1,6 +1,7 @@
 
 
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
@@ -42,6 +43,10 @@ class _PointShopScreenState extends State<PointShopScreen> {
       _pagingController.error = error;
     }
   }
+  Future getUserInfo() async {
+    final info = await fireStore.collection('UserInfo').doc(FirebaseAuth.instance.currentUser?.uid).get();
+    return info;
+  }
 
   @override
   void initState() {
@@ -64,42 +69,47 @@ class _PointShopScreenState extends State<PointShopScreen> {
           backgroundColor: Colors.white,
           actions: [
             Container(
-              margin: EdgeInsets.symmetric(vertical: 13),
-              child: Row(
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.alarm,
-                      //MyFlutterApp.cat,
-                      color: Color(0xFFFC896F),
-                      size: 12,
-                    ),
-                    label: Text(
-                      '고양이 d 마리',
-                      style: TextStyle(fontSize: 10, color: Colors.black),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      backgroundColor: Colors.black12,
-                      side: const BorderSide(width: 2, color: Colors.white),
-                      //minimumSize: Size(100, 30),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: null,
-                    child: Text(
-                      'NNN 냥',
-                      style: TextStyle(fontSize: 10, color: Colors.black),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      backgroundColor: Colors.black12,
-                      side: const BorderSide(width: 2, color: Colors.white),
-                      //minimumSize: Size(100, 30),
-                    ),
-                  ),
-                  /*
+              child: FutureBuilder(
+                  future: getUserInfo(),
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(vertical: 13),
+                        child: Row(
+                          children: [
+                            OutlinedButton.icon(
+                              onPressed: null,
+                              icon: Icon(
+                                Icons.alarm,
+                                //MyFlutterApp.cat,
+                                color: Color(0xFFFC896F),
+                                size: 12,
+                              ),
+                              label: Text(
+                                '고양이 '+snapshot.data['level'].toString()+'마리',
+                                style: TextStyle(fontSize: 10, color: Colors.black),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                shape: const StadiumBorder(),
+                                backgroundColor: Colors.black12,
+                                side: const BorderSide(width: 2, color: Colors.white),
+                                //minimumSize: Size(100, 30),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: null,
+                              child: Text(
+                                snapshot.data['point'].toString()+'냥',
+                                style: TextStyle(fontSize: 10, color: Colors.black),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                shape: const StadiumBorder(),
+                                backgroundColor: Colors.black12,
+                                side: const BorderSide(width: 2, color: Colors.white),
+                                //minimumSize: Size(100, 30),
+                              ),
+                            ),
+                            /*
                   IconButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -110,7 +120,14 @@ class _PointShopScreenState extends State<PointShopScreen> {
                     ),
                   ),
                   */
-                ],
+                          ],
+                        ),
+                      );
+                    }
+                    else {
+                      return const Center(child: CircularProgressIndicator(),);
+                    }
+                  }
               ),
             ),
           ],

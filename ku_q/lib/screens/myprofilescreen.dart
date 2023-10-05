@@ -30,7 +30,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   }
   */
   Future getUserInfo() async {
-    final info = await fireStore.collection('UserInfo').doc('p2iuraG7h5Z77GLyTyIDOmxXpAo2').get();
+    final info = await fireStore.collection('UserInfo').doc(FirebaseAuth.instance.currentUser?.uid).get();
     return info;
   }
 
