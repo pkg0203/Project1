@@ -14,10 +14,18 @@ class MyProfileScreen extends StatefulWidget {
 
 CollectionReference users = FirebaseFirestore.instance.collection('UserInfo');
 
-Future<void> updateUser(nicknamechange) {
+Future<void> updateNick(nicknamechange) {
   return users
       .doc(FirebaseAuth.instance.currentUser?.uid)
       .update({'nickName': nicknamechange})
+      .then((value) => print("User Updated"))
+      .catchError((error) => print("Failed to update user: $error"));
+}
+
+Future<void> updateIntro(introchange) {
+  return users
+      .doc(FirebaseAuth.instance.currentUser?.uid)
+      .update({'intro': introchange})
       .then((value) => print("User Updated"))
       .catchError((error) => print("Failed to update user: $error"));
 }
@@ -96,7 +104,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           TextButton(
                             child: const Text('확인'),
                             onPressed: () {
-                              updateUser(nicknamechange);
+                              updateNick(nicknamechange);
+                              updateIntro(introchange);
                               Navigator.of(context).pop();
                             },
                           ),

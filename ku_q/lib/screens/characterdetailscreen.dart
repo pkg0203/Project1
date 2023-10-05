@@ -1,7 +1,6 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:ku_q/screens/pointshopcharacterscreen.dart';
 import 'package:get/get.dart';
 //import 'package:ku_q/icons/my_flutter_app_icons.dart';
 import 'package:ku_q/cards/charactercard.dart';

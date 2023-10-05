@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/screens/characterdetailscreen.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,17 @@ class CharacterCard extends StatefulWidget {
 
   @override
   State<CharacterCard> createState() => _CharacterCardState();
+}
+
+CollectionReference users = FirebaseFirestore.instance.collection('UserInfo');
+
+Future<void> characterBuy(userpoint) {
+  userpoint = -userpoint;
+  return users
+      .doc(FirebaseAuth.instance.currentUser?.uid)
+      .update({'point': FieldValue.increment(userpoint)})
+      .then((value) => print("User Updated"))
+      .catchError((error) => print("Failed to update user: $error"));
 }
 
 class _CharacterCardState extends State<CharacterCard> {
@@ -67,12 +79,9 @@ class _CharacterCardState extends State<CharacterCard> {
                     width: MediaQuery.of(context).size.width * 0.2,
                     height: MediaQuery.of(context).size.width * 0.2,
                     //child: Image.network(widget.docData['characpicurl']),
-                    child: ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-                      child: Image(
-                        image: NetworkImage(widget.docData['characpicurl']),
-                        fit: BoxFit.cover,
-                      ),
+                    child: Image(
+                      image: NetworkImage(widget.docData['characpicurl']),
+                      fit: BoxFit.cover,
                     ),
                   ),
 
@@ -189,8 +198,12 @@ class _CharacterCardState extends State<CharacterCard> {
                           flex: 1,
                           child: OutlinedButton.icon(
                             onPressed: () {
+                              characterBuy(widget.docData['value']);
+                              /*
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) => CharacterDetailScreen()));
+
+                               */
                             },
                             icon: Icon(
                               Icons.arrow_forward_ios,
@@ -198,7 +211,7 @@ class _CharacterCardState extends State<CharacterCard> {
                               size: 15,
                             ),
                             label: Text(
-                              '꾸미기',
+                              '구매하기('+ widget.docData['value'].toString() + '냥)',
                               style:
                               TextStyle(fontSize: 15, color: Colors.black),
                             ),

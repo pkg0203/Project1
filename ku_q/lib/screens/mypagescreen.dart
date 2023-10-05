@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/bookmarked_posts_page.dart';
@@ -24,6 +25,14 @@ class _MyPageScreenState extends State<MyPageScreen> {
   Future getUserInfo() async {
     final info = await fireStore.collection('UserInfo').doc(FirebaseAuth.instance.currentUser?.uid).get();
     return info;
+  }
+  Future getCharacterInfo() async {
+    final info1 = await fireStore.collection('Character').doc().get();
+    return info1;
+  }
+  static Future<dynamic> loadFromStorage
+      (BuildContext context, String image) async {
+    return await FirebaseStorage.instance.ref().child(image).getDownloadURL();
   }
 
   //static const int _pageSize = 2;
@@ -86,9 +95,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                           height: 5,
                                         ),
                                         OutlineCircleButton(
-                                            child: Icon(
-                                              Icons.person_outline,
-                                              size: 120,
+                                            child: Image(
+                                              image: NetworkImage('https://firebasestorage.googleapis.com/v0/b/ku-q-6124f.appspot.com/o/IMG_6193.JPG?alt=media&token=fb42cded-03a2-4730-bbd7-b8649de93b97'),
+                                              fit: BoxFit.cover,
                                             ),
                                             radius: 120.0,
                                             borderSize: 0.5,
