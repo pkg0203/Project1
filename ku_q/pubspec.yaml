@@ -43,6 +43,11 @@ dependencies:
   intl: ^0.18.0
   firebase_auth: ^4.9.0
   firebase_core: ^2.15.1
+  firebase_storage: ^11.2.7
+  image_picker: ^1.0.4
+  permission_handler: ^10.2.0
+  dotted_border: ^2.1.0
+  multi_image_picker: ^4.8.1
 
 dev_dependencies:
   flutter_test:
@@ -86,8 +91,28 @@ flutter:
     - family: NanumSquare
       fonts:
         - asset: assets/fonts/NanumSquareR.ttf
-          weight: 300
+          weight: 500
         - asset: assets/fonts/NanumSquareB.ttf
+          weight: 900
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Pretendard-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Pretendard-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Pretendard-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Pretendard-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Pretendard-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Pretendard-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Pretendard-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Pretendard-Black.ttf
           weight: 900
 
   # For details regarding fonts from package dependencies,

@@ -33,6 +33,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   TextEditingController nickNameController = TextEditingController();
 
   bool nickNameDupCheck = false;
+  bool pwCheck = false;
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +111,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     SizedBox(
                         height: 40,
                         child: TextField(
+                          style: const TextStyle(fontFamily: "Pretendard", fontWeight: FontWeight.w500),
                           controller: pwController,
                           cursorHeight: 20,
                           obscureText: true,
@@ -122,6 +124,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               ),
                               labelText: "비밀번호"
                           ),
+                          onChanged: (value) {
+                            if (value == pwCheckController.text) {
+                              setState(() {
+                                pwCheck = true;
+                              });
+                            }
+                            else {
+                              setState(() {
+                                pwCheck = false;
+                              });
+                            }
+                          },
                         )
                     ),
                     const SizedBox(height: 10),
@@ -133,6 +147,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     SizedBox(
                         height: 40,
                         child: TextField(
+                          style: const TextStyle(fontFamily: "Pretendard", fontWeight: FontWeight.w500),
                           controller: pwCheckController,
                           cursorHeight: 20,
                           obscureText: true,
@@ -145,9 +160,25 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               ),
                               labelText: "비밀번호 확인"
                           ),
+                          onChanged: (value) {
+                            if (value == pwController.text) {
+                              setState(() {
+                                pwCheck = true;
+                              });
+                            }
+                            else {
+                              setState(() {
+                                pwCheck = false;
+                              });
+                            }
+                          },
                         )
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(
+                        width: double.infinity,
+                        child: pwCheck ? const Text("") : const Text("비밀번호가 일치하지 않습니다", style: TextStyle(color: Colors.red))
+                    ),
+                    const SizedBox(height: 20),
                     const SizedBox(
                         width: double.infinity,
                         height: 25,
@@ -221,7 +252,32 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       width: double.infinity,
                       child: RawMaterialButton(
                           onPressed: () {
-                            _createUser('${emailController.text}@korea.ac.kr', pwController.text, nickNameController.text).then(
+                            if (emailController.text.isEmpty) {
+                              showDialog(context: context, builder: (context) {
+                                return const AlertDialog(title: Text("메일 주소를 입력해주세요"));
+                              });
+                            }
+                            else if (pwController.text.isEmpty) {
+                              showDialog(context: context, builder: (context) {
+                                return const AlertDialog(title: Text("사용하실 비밀번호를 입력해주세요"));
+                              });
+                            }
+                            else if (!pwCheck) {
+                              showDialog(context: context, builder: (context) {
+                                return const AlertDialog(title: Text("비밀번호와 비밀번호 확인이 일치하지 않습니다"));
+                              });
+                            }
+                            else if (nickNameController.text.isEmpty) {
+                              showDialog(context: context, builder: (context) {
+                                return const AlertDialog(title: Text("사용하실 닉네임을 입력해주세요"));
+                              });
+                            }
+                            else if (!nickNameDupCheck) {
+                              showDialog(context: context, builder: (context) {
+                                return const AlertDialog(title: Text("닉네임 중복 확인해주세요!"));
+                              });
+                            }
+                            else {_createUser('${emailController.text}@korea.ac.kr', pwController.text, nickNameController.text).then(
                                 (msg) {
                                   if (msg == '회원가입에 성공했습니다! 이메일 인증 이후 원활한 앱 이용이 가능합니다') {
                                     showDialog(context: context, builder: (context) {
@@ -252,7 +308,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                     });
                                   }
                                 }
-                            );
+                            );}
                           },
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           fillColor: const Color(0xFFFC896F),
@@ -282,8 +338,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               'point' : 300,
               'bookmarkedPosts' : []
             });
-            newUserInfo.collection('Like').doc('rock_bottom').set({});
-            newUserInfo.collection('Bookmark').doc('rock_bottom').set({});
           }
       );
       message = '회원가입에 성공했습니다! 이메일 인증 이후 원활한 앱 이용이 가능합니다';

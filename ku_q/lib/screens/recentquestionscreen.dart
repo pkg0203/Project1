@@ -8,7 +8,6 @@ import 'package:ku_q/make_question_page.dart';
 import 'package:get/get.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
-import '../cards/surveycard.dart';
 
 class RecentQuestionScreen extends StatefulWidget {
   const RecentQuestionScreen({super.key});
@@ -37,7 +36,7 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
       appBar: AppBar(
         title: const Text("최신 Q&A 게시판"),
         centerTitle: true,
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w900),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -61,7 +60,7 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
           width: MediaQuery.of(context).size.width * 0.9,
           height: 40,
           child: FloatingActionButton.extended(
-            onPressed: () {Get.to(const MakeQuestionPage(), transition: Transition.downToUp);},
+            onPressed: () {Get.to(() => const MakeQuestionPage(), transition: Transition.downToUp);},
             backgroundColor: const Color(0xFFFC896F),
             icon: const Icon(Icons.add),
             label: const Text("질문하기", style: TextStyle(fontSize: 22, color: Colors.white)),

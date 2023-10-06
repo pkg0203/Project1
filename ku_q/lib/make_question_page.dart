@@ -1,12 +1,18 @@
 
 
 
+
 import 'dart:math';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ku_q/cards/image_preview_card.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class ScrollBehaviorWithoutGlow extends ScrollBehavior {
   @override
@@ -28,6 +34,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
   FirebaseAuth fireAuth = FirebaseAuth.instance;
+  FirebaseStorage fireStorage = FirebaseStorage.instance;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
@@ -36,6 +43,8 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
   String postTitle = "";
   String postContent = "";
   int additionalPoint = 0;
+
+  List<Asset> selectedImages = [];
 
   final String _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   final Random _rnd = Random();
@@ -63,7 +72,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
             leading: IconButton(
               icon: const Icon(Icons.clear, color: Colors.black),
               onPressed: () {
-                if (titleController.text.isNotEmpty || contentController.text.isNotEmpty){
+                if (titleController.text.isNotEmpty || contentController.text.isNotEmpty || selectedImages.isNotEmpty){
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -103,7 +112,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                   child: Column(
                       children: [
                         Container(
-                            height: 300,
+                            height: selectedImages.isEmpty ? 300 : 435,
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
                                 color: Colors.black12,
@@ -144,7 +153,22 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                           width: 40,
                                           height: 40,
                                           child: RawMaterialButton(
-                                              onPressed: () {},
+                                              onPressed: () async {
+                                                if (selectedImages.isNotEmpty) {
+                                                  selectedImages.clear();
+                                                }
+                                                try {
+                                                  List<Asset> resultList = [];
+                                                  resultList =
+                                                  await MultiImagePicker.pickImages(maxImages: 10, enableCamera: true);
+                                                  setState(() {
+                                                    selectedImages = resultList;
+                                                  });
+                                                }
+                                                catch (e) {
+                                                  print(e);
+                                                }
+                                              },
                                               fillColor: Colors.white,
                                               elevation: 0,
                                               shape: RoundedRectangleBorder(
@@ -180,7 +204,18 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                             )
                                         ),
                                       )
-                                  )
+                                  ),
+                                  selectedImages.isNotEmpty ?
+                                      Expanded(
+                                        child: SizedBox(
+                                          height: 100,
+                                          child: ListView(
+                                            scrollDirection: Axis.horizontal,
+                                            children: selectedImages.map((e) => ImagePreviewCard(file: e)).toList()
+                                          ),
+                                        ),
+                                      )
+                                      : Container()
                                 ]
                             )
                         ),
@@ -384,7 +419,8 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                                         "bookmarkCount": 0,
                                                         "likeCount": 0,
                                                         "likedBy": [],
-                                                        "answerCount": 0
+                                                        "answerCount": 0,
+                                                        "selectedAnswer": "not_yet"
 
                                                         }
                                                     );

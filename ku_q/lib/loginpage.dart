@@ -99,6 +99,7 @@ class _LogInPageState extends State<LogInPage> {
                       height: 35,
                       margin: const EdgeInsets.only(top: 20),
                       child: TextField(
+                        style: const TextStyle(fontFamily: "Pretendard", fontWeight: FontWeight.w500),
                         controller: pwController,
                         maxLength: 16,
                         maxLines: 1,
@@ -199,11 +200,13 @@ class _LogInPageState extends State<LogInPage> {
       } else {
         message = '로그인에 실패했습니다.\n에러코드 : ${e.code}';
       }
+
       showDialog(context: context, builder: (context) {
         return AlertDialog(
           title: Text(message)
         );
       });
+
     }
   }
 
