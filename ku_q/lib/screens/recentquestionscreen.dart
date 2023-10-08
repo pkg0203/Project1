@@ -2,6 +2,7 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ku_q/cards/postcard.dart';
 import 'package:ku_q/make_question_page.dart';
@@ -27,6 +28,7 @@ class ScrollBehaviorWithoutGlow extends ScrollBehavior {
 class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
+  FirebaseAuth fireAuth = FirebaseAuth.instance;
 
   static const int _pageSize = 5;
 
@@ -60,7 +62,20 @@ class _RecentQuestionScreenState extends State<RecentQuestionScreen> {
           width: MediaQuery.of(context).size.width * 0.9,
           height: 40,
           child: FloatingActionButton.extended(
-            onPressed: () {Get.to(() => const MakeQuestionPage(), transition: Transition.downToUp);},
+            onPressed: () async {
+              try {
+                DocumentSnapshot<Map<String, dynamic>> myInfo = await fireStore
+                    .collection('UserInfo')
+                    .doc(fireAuth.currentUser?.uid)
+                    .get();
+                String nickName = myInfo.data()?['nickName'];
+                int myPoint = myInfo.data()?['point'];
+                Get.to(() => MakeQuestionPage(nickName: nickName, myPoint: myPoint), transition: Transition.downToUp);
+              }
+              catch (e) {
+                print(e);
+              }
+            },
             backgroundColor: const Color(0xFFFC896F),
             icon: const Icon(Icons.add),
             label: const Text("질문하기", style: TextStyle(fontSize: 22, color: Colors.white)),

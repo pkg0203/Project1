@@ -1,9 +1,8 @@
 
 
 
-
-import 'dart:math';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ku_q/cards/image_preview_card.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 
 class ScrollBehaviorWithoutGlow extends ScrollBehavior {
   @override
@@ -24,7 +22,9 @@ class ScrollBehaviorWithoutGlow extends ScrollBehavior {
 
 
 class MakeQuestionPage extends StatefulWidget {
-  const MakeQuestionPage({super.key});
+  String nickName;
+  int myPoint;
+  MakeQuestionPage({super.key, required this.nickName, required this.myPoint});
 
   @override
   State<MakeQuestionPage> createState() => _MakeQuestionPageState();
@@ -34,7 +34,6 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
   FirebaseAuth fireAuth = FirebaseAuth.instance;
-  FirebaseStorage fireStorage = FirebaseStorage.instance;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
@@ -44,7 +43,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
   String postContent = "";
   int additionalPoint = 0;
 
-  List<Asset> selectedImages = [];
+  List<XFile> selectedImages = [];
 
   final String _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   final Random _rnd = Random();
@@ -112,7 +111,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                   child: Column(
                       children: [
                         Container(
-                            height: selectedImages.isEmpty ? 300 : 435,
+                            //height: selectedImages.isEmpty ? 300 : 435,
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
                                 color: Colors.black12,
@@ -154,16 +153,21 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                           height: 40,
                                           child: RawMaterialButton(
                                               onPressed: () async {
-                                                if (selectedImages.isNotEmpty) {
-                                                  selectedImages.clear();
-                                                }
                                                 try {
-                                                  List<Asset> resultList = [];
-                                                  resultList =
-                                                  await MultiImagePicker.pickImages(maxImages: 10, enableCamera: true);
-                                                  setState(() {
-                                                    selectedImages = resultList;
-                                                  });
+                                                  final List<XFile> pickedImages = await ImagePicker().pickMultiImage(imageQuality: 50);
+                                                  if (pickedImages.isNotEmpty){
+                                                    if (pickedImages.length <= 5){
+                                                      setState(() {
+                                                        selectedImages =
+                                                            pickedImages;
+                                                      });
+                                                    }
+                                                    else {
+                                                      showDialog(context: context, builder: (context) {
+                                                        return const AlertDialog(title: Text("최대 5개의 이미지까지 선택할 수 있습니다."));
+                                                      });
+                                                    }
+                                                  }
                                                 }
                                                 catch (e) {
                                                   print(e);
@@ -205,17 +209,17 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                         ),
                                       )
                                   ),
-                                  selectedImages.isNotEmpty ?
-                                      Expanded(
-                                        child: SizedBox(
-                                          height: 100,
-                                          child: ListView(
+                                  if (selectedImages.isNotEmpty)
+                                    Scrollbar(
+                                      child: Container(
+                                        padding: const EdgeInsets.only(bottom: 5),
+                                        height: 135,
+                                        child: ListView(
                                             scrollDirection: Axis.horizontal,
-                                            children: selectedImages.map((e) => ImagePreviewCard(file: e)).toList()
-                                          ),
+                                            children: selectedImages.map((e) => ImagePreviewCardFileImage(file: e)).toList()
                                         ),
-                                      )
-                                      : Container()
+                                      ),
+                                    ),
                                 ]
                             )
                         ),
@@ -223,20 +227,21 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                             margin: const EdgeInsets.only(top: 40),
                             // color: Colors.blue,
                             height: 30,
-                            child: const Row(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
+                                const Row(
                                     children: [
-                                      Text("사용 포인트  ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                                      Text("사용 포인트  ", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
                                       Icon(Icons.help_outline, size: 22, color: Color(0xD0D0D0D0)),
                                     ]
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text("OO님의 잔여 포인트 :", style: TextStyle(fontSize: 12)),
-                                    Text("NNN냥 ", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                                    Text(widget.nickName, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
+                                    const Text("님의 잔여 포인트 :", style: TextStyle(fontSize: 13)),
+                                    Text("${widget.myPoint.toString()}냥 ", style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900)),
                                   ],
                                 )
                               ],
@@ -329,8 +334,8 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                                 child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      const Text("   총 사용 포인트", style: TextStyle(fontWeight: FontWeight.w500)),
-                                                      Text('${(additionalPoint + 100).toString()} 냥  ', style: const TextStyle(fontWeight: FontWeight.bold,
+                                                      const Text("   총 사용 포인트", style: TextStyle(fontWeight: FontWeight.bold)),
+                                                      Text('${(additionalPoint + 100).toString()} 냥  ', style: const TextStyle(fontWeight: FontWeight.w900,
                                                           fontSize: 22)),
                                                     ]
                                                 )
@@ -356,36 +361,23 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                     barrierDismissible: true,
                                     builder: (BuildContext context) {
                                       if (titleController.text.isEmpty) {
-                                        return AlertDialog(
-                                            title: const Text("질문 제목을 입력해주세요"),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {Get.back();},
-                                                child: const Text("확인"),
-                                              )
-                                            ]
+                                        return const AlertDialog(
+                                            title: Text("질문 제목을 입력해주세요!"),
                                         );  // 질문 제목을 입력하지 않았을 시
                                       }
                                       else if (contentController.text.isEmpty) {
-                                        return AlertDialog(
-                                            title: const Text("질문 내용을 입력해주세요"),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {Get.back();},
-                                                child: const Text("확인"),
-                                              )
-                                            ]
+                                        return const AlertDialog(
+                                            title: Text("질문 내용을 입력해주세요!"),
                                         );  // 질문 내용을 입력하지 않았을 시
                                       }
                                       else if (additionalPointController.text.isEmpty) {
-                                        return AlertDialog(
-                                            title: const Text("추가로 사용할 포인트를 입력해주세요"),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {Get.back();},
-                                                child: const Text("확인"),
-                                              )
-                                            ]
+                                        return const AlertDialog(
+                                            title: Text("추가 사용 포인트를 입력해주세요! (최소 0)"),
+                                        );
+                                      }
+                                      else if (widget.myPoint < additionalPoint + 100) {
+                                        return const AlertDialog(
+                                            title: Text("보유 포인트가 부족합니다!"),
                                         );
                                       }
                                       else {
@@ -406,6 +398,22 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                                   int currentMilliSeconds = now.millisecondsSinceEpoch;
                                                   DateTime date = DateTime.fromMillisecondsSinceEpoch(currentMilliSeconds);
 
+                                                  List imagesRef = [];
+                                                  if (selectedImages.isNotEmpty) {
+                                                    try {
+                                                      var storageRef = FirebaseStorage.instance.ref();
+                                                      for (int i = 0; i < selectedImages.length; i++) {
+                                                        final imageRef = storageRef.child('images/post/${date.year}_${date.month}/${postKey}_$i');
+                                                        File file = File(selectedImages[i].path);
+                                                        await imageRef.putFile(file);
+                                                        final imageURL = await imageRef.getDownloadURL();
+                                                        imagesRef.add(imageURL);
+                                                      }
+                                                    } on FirebaseException catch (e) {
+                                                      print(e.code);
+                                                    }
+                                                  }
+
                                                   await fireStore.runTransaction((transaction) async {
                                                     transaction.set(fireStore.collection("Post").doc(postKey),
                                                         {
@@ -420,7 +428,8 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                                         "likeCount": 0,
                                                         "likedBy": [],
                                                         "answerCount": 0,
-                                                        "selectedAnswer": "not_yet"
+                                                        "selectedAnswer": "not_yet",
+                                                        "images": imagesRef
 
                                                         }
                                                     );
@@ -430,6 +439,12 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
                                                       FieldValue.arrayUnion(
                                                           [postKey])
                                                       });
+                                                    transaction.update(fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid),
+                                                        {
+                                                          "point":
+                                                          FieldValue.increment(-(additionalPoint + 100))
+                                                        });
+
                                                   });
                                                   Get.back();
                                                   Get.back();

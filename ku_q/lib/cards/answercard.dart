@@ -64,15 +64,15 @@ class _AnswerCardState extends State<AnswerCard> {
                                   width: 40,
                                   height: 50
                               ),
-                              Text(snapshot.data['nickName'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              Text(snapshot.data['nickName'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black)),
                               Text(
                                   DateFormat('   yyyy.MM.dd  HH:mm').format(DateTime.parse(widget.docData['writeDate'].toDate().toString())),
-                                  style: const TextStyle(fontSize: 12)
+                                  style: const TextStyle(fontSize: 12, color: Colors.black)
                               ),
                             ]
                         ),
                         trailing: const SizedBox(width: 0),
-                        subtitle: Text(widget.docData['content']),
+                        subtitle: Text(widget.docData['content'], style: const TextStyle(color: Colors.black)),
                         children: [
                           SizedBox(
                               height: 50,
@@ -87,7 +87,7 @@ class _AnswerCardState extends State<AnswerCard> {
                                         child: SizedBox(
                                           height: 35,
                                           child: widget.postWriterUid == fireAuth.currentUser?.uid ? RawMaterialButton(
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90), side: BorderSide()),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90), side: const BorderSide()),
                                             onPressed: () async {
                                               _SelectAnswer();
                                             },

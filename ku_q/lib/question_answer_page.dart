@@ -4,12 +4,14 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ku_q/make_question_page.dart';
 import 'cards/answercard.dart';
+import 'cards/image_preview_card.dart';
 import 'cards/selected_answer_card.dart';
 
 
@@ -44,6 +46,8 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
   bool isBookmarked = false;
   int bookmarkCount = 0;
 
+  List postedImages = [];
+
   @override
   void initState() {
     setState(() {
@@ -51,6 +55,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
       likeCount = widget.docData['likeCount'];
       isLiked = widget.docData['likedBy'].contains(fireAuth.currentUser?.uid);
       bookmarkCount = widget.docData['bookmarkCount'];
+      postedImages = widget.docData['images'];
       fireStore.collection('UserInfo').doc(fireAuth.currentUser?.uid).get().then(
           (snapshot) {
             isBookmarked = snapshot['bookmarkedPosts'].contains(widget.docData['key']);
@@ -128,7 +133,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   List<DocumentSnapshot> docs = snapshot.data!.docs;
-                                  var selected = null;
+                                  var selected;
                                   for (DocumentSnapshot doc in docs) {
                                     if (doc.id == widget.docData['selectedAnswer']) {
                                       selected = doc;
@@ -138,7 +143,7 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                   return Column(
                                     children: [
                                       Container(
-                                        // height: 300,
+                                          //height: 700,
                                           padding: const EdgeInsets.all(20),
                                           decoration: BoxDecoration(
                                               color: const Color(0xFFE2E2E2),
@@ -176,6 +181,19 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                     margin: const EdgeInsets.symmetric(vertical: 20),
                                                     child: const Center(child: Text("사진(있는 경우)", style: TextStyle(fontSize: 40)))
                                                 ),*/
+
+                                                if (postedImages.isNotEmpty)
+                                                  Scrollbar(
+                                                    child: Container(
+                                                      padding: const EdgeInsets.only(bottom: 5),
+                                                      height: 135,
+                                                      child: ListView(
+                                                          scrollDirection: Axis.horizontal,
+                                                          children: postedImages.map((url) => ImagePreviewCardNetworkImage(url: url)).toList()
+                                                      ),
+                                                    ),
+                                                  ),
+
                                                 Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
@@ -236,7 +254,9 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                         ],
                                                       ),
                                                     ]
-                                                )
+                                                ),
+
+
                                               ]
                                           )
                                       ),
