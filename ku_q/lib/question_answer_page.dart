@@ -202,18 +202,34 @@ class _QuestionAndAnswerPageState extends State<QuestionAndAnswerPage> {
                                                             IconButton(
                                                               onPressed: () async {
                                                                 if (!isLiked) {
-                                                                  IncLikes();
-                                                                  setState(() {
-                                                                    isLiked = true;
-                                                                    likeCount += 1;
-                                                                  });
-                                                                }
-                                                                else {
-                                                                  DecLikes();
-                                                                  setState(() {
-                                                                    isLiked = false;
-                                                                    likeCount -= 1;
-                                                                  });
+                                                                  showDialog(
+                                                                    context: context,
+                                                                    builder: (context) {
+                                                                      return AlertDialog(
+                                                                        title: const Text("이 질문에 공감하시겠습니까?"),
+                                                                        actions: [
+                                                                          TextButton(
+                                                                              onPressed: () async {
+                                                                                Get.back();
+                                                                              },
+                                                                              child: const Text("취소")
+                                                                          ),
+                                                                          TextButton(
+                                                                            onPressed: () async {
+                                                                              Get.back();
+                                                                              IncLikes();
+                                                                              setState(() {
+                                                                                isLiked = true;
+                                                                                likeCount += 1;
+                                                                              });
+                                                                            },
+                                                                            child: const Text("확인")
+                                                                          )
+                                                                        ]
+                                                                      );
+                                                                    }
+                                                                  );
+
                                                                 }
                                                               },
                                                               icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: const Color(0xFFF42C50)),
